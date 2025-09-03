@@ -345,6 +345,7 @@ function orderBill() {
 
     alert("Thank you for choosing KS Vegetables. Your order is confirmed at " + dateTime);
 
+
     // Get existing orders or empty array
     let orders = JSON.parse(localStorage.getItem("orders")) || [];
 
@@ -355,6 +356,7 @@ function orderBill() {
 
     // Save back to localStorage
     localStorage.setItem("orders", JSON.stringify(orders));
+    window.parent.location.href="myorders.html";
 
   } else {
     alert("Please login first!");
