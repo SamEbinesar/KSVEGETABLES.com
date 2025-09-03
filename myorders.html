@@ -224,6 +224,75 @@ footer {
   transform: scale(1.05);
 }
 
+/* Bill Popup Styling */
+/* Bill Popup Styling */
+#billContainer h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.bill-container {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 350px;
+    margin: auto;
+}
+
+/* Remove bullets + spacing */
+.bill-container ul {
+    list-style: decimal;
+    padding: 0;
+    margin: 0;
+}
+
+/* Bill row styling */
+.bill-container li {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr; /* Item | Qty | Amount */
+    align-items: center;
+    background: #f9f9f9;
+    margin: 4px 0;
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+/* Item name */
+.veg-name {
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: left;
+}
+
+/* Qty column */
+.kg-value {
+    color: #27ae60;
+    text-align: center;
+}
+
+/* Amount column */
+.veg-amt {
+    color: #c0392b;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Total */
+.total {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 2px solid #ddd;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: right;
+    color: #2c3e50;
+}
+
+
+
 /* Mobile view: center the button */
 @media (max-width: 768px) {
   .clearbill button {
@@ -453,7 +522,7 @@ document.addEventListener("DOMContentLoaded", showLoginStatus);
       let orders = JSON.parse(localStorage.getItem("orders")) || [];
       let order = orders[index];
       alert("Showing bill for: " + order.time);
-      vieworderBILL();
+      viewORDERBILL();
     }
 
     // Load orders when page opens
@@ -474,5 +543,13 @@ document.addEventListener("DOMContentLoaded", showLoginStatus);
     </div>
   </div>
 
+  
+  <!-- Bill Popup -->
+<div id="billPopup" class="popup">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closeBillPopup()">&times;</span>
+    <div id="billContainer"></div>
+  </div>
+</div>
 </body>
 </html>

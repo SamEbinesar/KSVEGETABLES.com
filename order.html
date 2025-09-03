@@ -167,6 +167,9 @@ function showLoginStatus() {
     dropdown.style.display = "block"; // open if closed
   }
 }
+
+// login
+
 // Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
 
@@ -204,7 +207,7 @@ document.addEventListener("click", function (event) {
   <input type="text" id="searchBar" onkeyup="searchVegetable()" placeholder="Search for vegetables...">
 </div>
 <div class="view-bill">
-  <button class="view-bill-btn" onclick="viewBill()">View Bill</button>
+  <button class="view-bill-btn" onclick="viewbill()">View Bill</button>
 </div>
      <section class="products">
          <article> <img src="https://images.unsplash.com/photo-1607305387299-a3d9611cd469?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Tomato"> 
@@ -647,5 +650,52 @@ document.addEventListener("click", function (event) {
       <iframe id="loginFrame" src="" width="100%" height="400px" style="border:none;"></iframe>
     </div>
   </div>
+
+  <!-- Bill Popup -->
+<div id="billPopup" class="popup">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closeBillPopup()">&times;</span>
+    <div id="billContainer"></div>
+  </div>
+</div>
+<script>
+  function viewbill() {
+    if (billItems.length === 0) {
+        alert("Your bill is empty!");
+        return;
+    }
+
+    let totalAmount = billItems.reduce((sum, item) => sum + item.a, 0);
+
+    let billHTML = `
+        <h2>Your Bill</h2>
+        <div class="bill-container">
+        <ul>
+            ${billItems.map(item => `
+                <li>
+                    <span class="veg-name">${item.name}</span>
+                    <span class="kg-value">${item.kg} kg</span>
+                    <span class="veg-amt">Rs.${item.a}</span>
+                </li>
+            `).join('')}
+        </ul>
+        <div class="total">Total: Rs.${totalAmount}</div>
+        <div class="buttons">
+            <button class="edit-btn" onclick="editBill();closeBillPopup()">Edit Bill</button>
+            <button class="clear-btn" onclick="clearBill();closeBillPopup()">Clear Bill</button>
+            <button class="order-btn" onclick="orderBill();closeBillPopup()">Order Bill</button>
+        </div>
+        </div>
+    `;
+
+    document.getElementById("billContainer").innerHTML = billHTML;
+    document.getElementById("billPopup").style.display = "block";
+}
+
+function closeBillPopup() {
+    document.getElementById("billPopup").style.display = "none";
+}
+
+</script>
 </body>
 </html>

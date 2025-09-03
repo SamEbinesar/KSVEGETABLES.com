@@ -338,9 +338,10 @@ footer {
   box-shadow: 0 10px 20px rgb(255, 255, 255);
   
 }
-    .contact-card {
+  .contact-card {
      grid-template-columns: repeat(1,1fr); 
-    width: 100%;
+    width: 80%;
+    float: left;
   
   }
    .mobile-nav {
@@ -409,9 +410,6 @@ html, body {
   display: none;  /* hidden by default */
 }
 } 
-
-
-
 
 
 

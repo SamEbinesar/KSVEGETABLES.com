@@ -396,6 +396,44 @@ function vieworderbill(index) {
 }
 
 
+  function viewORDERBILL() {
+   let savedbill = localStorage.getItem("lastBill"); 
+
+    if (!savedbill) {
+        alert("Your bill is empty!");
+        return;
+    }
+
+    let billItems = JSON.parse(savedbill); 
+
+    // Calculate total
+    let totalAmount = billItems.reduce((sum, item) => sum + item.a, 0);
+
+
+    let billHTML = `
+        <h2>Your Bill</h2>
+        <div class="bill-container">
+        <ul>
+            ${billItems.map(item => `
+                <li>
+                    <span class="veg-name">${item.name}</span>
+                    <span class="kg-value">${item.kg} kg</span>
+                    <span class="veg-amt">Rs.${item.a}</span>
+                </li>
+            `).join('')}
+        </ul>
+        <div class="total">Total: Rs.${totalAmount}</div>
+       </div>
+    `;
+
+    document.getElementById("billContainer").innerHTML = billHTML;
+    document.getElementById("billPopup").style.display = "block";
+}
+
+function closeBillPopup() {
+    document.getElementById("billPopup").style.display = "none";
+}
+
 
 // login ----------------------------------------------------------
 function openLogin() {
