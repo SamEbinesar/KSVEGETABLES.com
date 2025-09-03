@@ -103,9 +103,12 @@ label {
             alert("Give your details properly");
         } else {
             
-            alert("🎉 Details saved successfully!");
+            alert("🎉 Details saved successfully! You can order now by clicking ORDER NOW ");
             loginuser();
-            document.getElementById("finalStep").style.display = "block";
+            window.parent.setLogin();
+            window.parent.updateLoginStatus();
+            window.parent.location.href="index.html";
+            
         }
     }
 function loginuser() {
