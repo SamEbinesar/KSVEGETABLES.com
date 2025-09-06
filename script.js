@@ -6,17 +6,27 @@
 function searchVegetable() {
   let input = document.getElementById("searchBar").value.toLowerCase();
   let articles = document.querySelectorAll(".products article");
+  let notFoundDiv = document.getElementById("searchnotfound");
+  let found = false;
 
   articles.forEach(article => {
     let name = article.querySelector("h3").innerText.toLowerCase();
     if (name.includes(input)) {
       article.style.display = "block";
+      found = true;
     } else {
       article.style.display = "none";
     }
   });
-}
 
+  if (found) {
+    notFoundDiv.classList.remove("show");
+    setTimeout(() => notFoundDiv.style.display = "none", 500); // waits for fade-out
+  } else {
+    notFoundDiv.style.display = "block";
+    setTimeout(() => notFoundDiv.classList.add("show"), 10); // triggers animation
+  }
+}
 let billItems = []; 
 let billItems2 = []; // stores vegetables and kg values
 function addToBill(inputId, vegName, amt) {
@@ -545,3 +555,4 @@ window.onload = function () {
 
 // Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
+
