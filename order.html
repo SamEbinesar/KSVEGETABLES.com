@@ -167,6 +167,21 @@ function showLoginStatus() {
     dropdown.style.display = "block"; // open if closed
   }
 }
+function increaseQty(inputId) {
+  let input = document.getElementById(inputId);
+  let step = parseFloat(input.step) || 1;
+  let value = parseFloat(input.value) || 0;
+  input.value = (value + step).toFixed(2);
+}
+
+function decreaseQty(inputId) {
+  let input = document.getElementById(inputId);
+  let step = parseFloat(input.step) || 1;
+  let value = parseFloat(input.value) || 0;
+  if (value > 0) {
+    input.value = (value - step).toFixed(2);
+  }
+}
 
 // login
 
@@ -209,29 +224,40 @@ document.addEventListener("click", function (event) {
 <div class="view-bill">
   <button class="view-bill-btn" onclick="viewbill()">View Bill</button>
 </div>
+<div id="searchnotfound" class="searchnotFOUND" style="display: none;">No such Vegetables available right now!
+</div>
      <section class="products">
-         <article> <img src="https://images.unsplash.com/photo-1607305387299-a3d9611cd469?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Tomato"> 
-            <h3>Tomato Rs.50/Kg</h3> 
-            <p>Calories: 18 kcal</p> 
-            <p>Main Vitamin: Vitamin C</p> 
-              <label for="tomatoQty">Enter Quantity (in kg):</label>
-  <input 
-    type="number" 
-    id="tomatoQty" 
-    name="tomatoQty" 
-    step="0.25" 
-    min="0.0" 
-    max="100" 
-    placeholder="e.g., 1.25"
-  >
-             <button onclick="addToBill('tomatoQty','Tomato',50)">Add to Bill</button>
-        </article>
+          <article>
+    <img src="https://images.unsplash.com/photo-1607305387299-a3d9611cd469?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Tomato"> 
+    <h3>Tomato Rs.50/Kg</h3> 
+    <p>Calories: 18 kcal</p> 
+    <p>Main Vitamin: Vitamin C</p> 
+
+    <label for="tomatoQty">Enter Quantity (in kg):</label>
+    <div class="qty-control">
+      <button type="button" class="qty-btn decrease" onclick="decreaseQty('tomatoQty')">-</button>
+      <input 
+        type="number" 
+        id="tomatoQty" 
+        name="tomatoQty" 
+        step="0.25" 
+        min="0.0" 
+        max="100" 
+        value="0"
+      >
+      <button type="button" class="qty-btn increase" onclick="increaseQty('tomatoQty')">+</button>
+    </div>
+
+    <button onclick="addToBill('tomatoQty','Tomato',50)">Add to Bill</button>
+  </article>
      <article> 
         <img src="https://images.unsplash.com/photo-1445282768818-728615cc910a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2Fycm90fGVufDB8fDB8fHww" alt="Carrot"> 
         <h3>Carrot Rs.80/Kg</h3> 
         <p>Calories: 41 kcal</p>
          <p>Main Vitamin: Vitamin A</p>
          <label for="carrotQty">Enter Quantity (in kg):</label>
+         <div class="qty-control">
+         <button type="button" class="qty-btn decrease" onclick="decreaseQty('carrotQty')">-</button>
   <input 
     type="number" 
     id="carrotQty" 
@@ -239,8 +265,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
-  >
+    value="0"
+  >     
+  <button type="button" class="qty-btn increase" onclick="increaseQty('carrotQty')">+</button>
+    </div>
             <button onclick="addToBill('carrotQty','Carrot',80)">Add to Bill</button>
          </article> 
          <article> <img src="https://images.unsplash.com/photo-1683355739329-cea18ba93f02?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Onion">
@@ -248,6 +276,8 @@ document.addEventListener("click", function (event) {
                  <p>Calories: 72 kcal</p> 
                  <p>Main Vitamin: Vitamin C</p>
                  <label for="sambaronionOty">Enter Quantity (in kg):</label>
+                 <div class="qty-control">
+      <button type="button" class="qty-btn decrease" onclick="decreaseQty('sambaronionOty')">-</button>
   <input 
     type="number" 
     id="sambaronionOty" 
@@ -255,8 +285,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  <button type="button" class="qty-btn increase" onclick="increaseQty('sambaronionOty')">+</button>
+    </div>
             <button onclick="addToBill('sambaronionOty','SambarOnion',50)">Add to Bill</button>
             </article>
           <article>
@@ -265,6 +297,8 @@ document.addEventListener("click", function (event) {
             <p>Calories: 40 kcal</p>
             <p>Main Vitamin: Vitamin B6</p>
             <label for="mballaryQty">Enter Quantity (in kg):</label>
+            <div class="qty-control">
+      <button type="button" class="qty-btn decrease" onclick="decreaseQty('mballaryQty')">-</button>
   <input 
     type="number" 
     id="mballaryQty" 
@@ -272,16 +306,21 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  <button type="button" class="qty-btn increase" onclick="increaseQty('mballaryQty')">+</button>
+  </div>
+
           <button onclick="addToBill('mballaryQty','MBallaray',20)">Add to Bill</button>
-          </article>
+  </article>
           <article>
             <img src="https://plus.unsplash.com/premium_photo-1723708958105-09e29205e551?q=80&w=844&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="BBallary">
             <h3>B.Ballary Rs.35/Kg</h3>
             <p>Calories: 38 kcal</p>
             <p>Main Vitamin: Vitamin B6</p>
             <label for="bballaryQty">Enter Quantity (in kg):</label>
+            <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('bballaryQty')">-</button>
   <input 
     type="number" 
     id="bballaryQty" 
@@ -289,8 +328,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+    <button type="button" class="qty-btn increase" onclick="increaseQty('bballaryQty')">+</button>
+  </div>
 <button onclick="addToBill('bballaryQty','Bballaray',35)">Add to Bill</button>
           </article>
         <article> 
@@ -299,6 +340,8 @@ document.addEventListener("click", function (event) {
              <p>Calories: 80 kcal</p> 
              <p>Main Vitamin: Vitamin C</p>
              <label for="gingerQty">Enter Quantity (in kg):</label>
+              <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('gingerQty')">-</button>
   <input 
     type="number" 
     id="gingerQty" 
@@ -306,8 +349,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+   <button type="button" class="qty-btn increase" onclick="increaseQty('gingerQty')">+</button>
+  </div>
             <button onclick="addToBill('gingerQty','Ginger',100)">Add to Bill</button>
              </article> 
             <article>
@@ -316,6 +361,8 @@ document.addEventListener("click", function (event) {
               <p>Calories: 149 kcal</p>
               <p>Main Vitamin: Vitamin B6</p>
               <label for="garlicQty">Enter Quantity (in kg):</label>
+              <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('garlicQty')">-</button>
   <input 
     type="number" 
     id="garlicQty" 
@@ -323,8 +370,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  <button type="button" class="qty-btn increase" onclick="increaseQty('garlicQty')">+</button>
+  </div>
             <button onclick="addToBill('garlicQty','Garlic',120)">Add to Bill</button>
             </article>
             <article> <img src="https://images.unsplash.com/photo-1668120082831-e83f387e3461?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Cabbage"> 
@@ -332,6 +381,8 @@ document.addEventListener("click", function (event) {
                 <p>Calories: 25 kcal</p> 
                 <p>Main Vitamin: Vitamin K</p> 
                 <label for="cabbageQty">Enter Quantity (in kg):</label>
+                 <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('cabbageQty')">-</button>
   <input 
     type="number" 
     id="cabbageQty" 
@@ -339,8 +390,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  <button type="button" class="qty-btn increase" onclick="increaseQty('cabbageQty')">+</button>
+  </div>
             <button onclick="addToBill('cabbageQty','Cabbage',30)">Add to Bill</button>
             </article>
          <article> 
@@ -349,6 +402,8 @@ document.addEventListener("click", function (event) {
              <p>Calories: 77 kcal</p>
               <p>Maiin Vitamin: Vitamin C</p> 
               <label for="potatoQty">Enter Quantity (in kg):</label>
+               <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('potatoQty')">-</button>
   <input 
     type="number" 
     id="potatoQty" 
@@ -356,8 +411,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  <button type="button" class="qty-btn increase" onclick="increaseQty('potatoQty')">+</button>
+  </div>
             <button onclick="addToBill('potatoQty','Potato',40)">Add to Bill</button>
             </article>
              
@@ -366,6 +423,8 @@ document.addEventListener("click", function (event) {
                       <p>Calories: 16 kcal</p> 
                       <p>Main Vitamin: Vitamin C</p> 
                       <label for="raddishQty">Enter Quantity (in kg):</label>
+                       <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('raddishQty')">-</button>
   <input 
     type="number" 
     id="raddishQty" 
@@ -373,8 +432,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+    <button type="button" class="qty-btn increase" onclick="increaseQty('raddishQty')">+</button>
+  </div>
             <button onclick="addToBill('raddishQty','Raddish',40)">Add to Bill</button>
                     </article> 
 
@@ -384,6 +445,8 @@ document.addEventListener("click", function (event) {
                          <p>Calories: 25 kcal</p>
                           <p>Main Vitamin: Vitamin B6</p> 
                           <label for="brinjalQty">Enter Quantity (in kg):</label>
+                             <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('brinjalQty')">-</button>
   <input 
     type="number" 
     id="brinjalQty" 
@@ -391,8 +454,10 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+   <button type="button" class="qty-btn increase" onclick="increaseQty('raddishQty')">+</button>
+  </div>
             <button onclick="addToBill('brinjalQty','Brinjal',50)">Add to Bill</button>
             </article> 
             <article>
@@ -401,6 +466,8 @@ document.addEventListener("click", function (event) {
               <p>Calories: 89 kcal</p>
               <p>Main Vitamin: Vitamin B6</p>
               <label for="valakkaiQty">Enter Quantity (in kg):</label>
+                     <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('valakkaiQty')">-</button>
   <input 
     type="number" 
     id="valakkaiQty" 
@@ -408,8 +475,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('valakkaiQty')">+</button>
+  </div>
             <button onclick="addToBill('valakkaiQty','Valakkai',30)">Add to Bill</button>
             </article>
             <article>
@@ -418,6 +488,8 @@ document.addEventListener("click", function (event) {
               <p>Calories: 31 kcal</p>
               <p>Main Vitamin: Vitamin K</p>
               <label for="beansQty">Enter Quantity (in kg):</label>
+               <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('beansQty')">-</button>
   <input 
     type="number" 
     id="beansQty" 
@@ -425,8 +497,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('beansQty')">+</button>
+  </div>
             <button onclick="addToBill('beansQty','Beans',60)">Add to Bill</button>
             </article>
           <article>
@@ -435,6 +510,8 @@ document.addEventListener("click", function (event) {
             <p>Calories: 34 kcal</p>
             <p>Main Vitamin: Vitamin A</p>
             <label for="pavakkaiQty">Enter Quantity (in kg):</label>
+            <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('pavakkaiQty')">-</button>
   <input 
     type="number" 
     id="pavakkaiQty" 
@@ -442,8 +519,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+     value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('pavakkaiQty')">+</button>
+  </div>
             <button onclick="addToBill('pavakkaiQty','Pavakkai',80)">Add to Bill</button>
           </article>
           <article>
@@ -452,6 +532,9 @@ document.addEventListener("click", function (event) {
             <p>Calories: 60 kcal</p>
             <p>Main Vitamin: Vitamin C</p>
             <label for="mangoQty">Enter Quantity (in kg):</label>
+             <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('mangoQty')">-</button>
+
   <input 
     type="number" 
     id="mangoQty" 
@@ -459,8 +542,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+      value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('mangoQty')">+</button>
+  </div>
             <button onclick="addToBill('mangoQty','Mango',50)">Add to Bill</button>
           </article>
           <article>
@@ -469,6 +555,9 @@ document.addEventListener("click", function (event) {
             <p>Calories: 18 kcal</p>
             <p>Main Vitamin: Vitamin C</p>
             <label for="pudalangaiQty">Enter Quantity (in kg):</label>
+             <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('pudalangaiQty')">-</button>
+
   <input 
     type="number" 
     id="pudalangaiQty" 
@@ -476,9 +565,12 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+      value="0"
   >
-            <button onclick="addToBill('pudalangaiQty','Pudalangai',40)">Add to Bill</button>
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('pudalangaiQty')">+</button>
+  </div>
+         <button onclick="addToBill('pudalangaiQty','Pudalangai',40)">Add to Bill</button>
           </article>
         <article>
           <img src="https://media.istockphoto.com/id/1194258667/photo/bottle-gourd-for-sale-in-market.webp?a=1&b=1&s=612x612&w=0&k=20&c=fZHiUBNstERZrULCkI9b7cu0hhTKC4iKhYsQ8T72Fvk=" alt="Sorakkai">
@@ -486,6 +578,9 @@ document.addEventListener("click", function (event) {
           <p>Calories: 14 kcal</p>
           <p>Main Vitamin: Vitamin B Complex</p>
           <label for="sorakkaiQty">Enter Quantity (in kg):</label>
+          <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('sorakkaiQty')">-</button>
+
   <input 
     type="number" 
     id="sorakkaiQty" 
@@ -493,8 +588,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+     value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('sorakkaiQty')">+</button>
+  </div>
            <button onclick="addToBill('sorakkaiQty','Sorakkai',40)">Add to Bill</button>
         </article>
         <article>
@@ -504,6 +602,9 @@ document.addEventListener("click", function (event) {
           <p>Main Vitamin: Vitamin C</p>
 
             <label for="capsicumQty">Enter Quantity (in kg):</label>
+             <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('capsicumQty')">-</button>
+
   <input 
     type="number" 
     id="capsicumQty" 
@@ -511,8 +612,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+   value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('capsicumQty')">+</button>
+  </div>
             <button onclick="addToBill('capsicumQty','Capsicum',80)">Add to Bill</button>
 
         </article>
@@ -522,6 +626,9 @@ document.addEventListener("click", function (event) {
           <p>Calories: 43 kcal</p>
           <p>Main Vitamin: Vitamin B9</p>
           <label for="beetrootQty">Enter Quantity (in kg):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('beetrootQty')">-</button>
+
   <input 
     type="number" 
     id="beetrootQty" 
@@ -529,8 +636,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+   value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('beetrootQty')">+</button>
+  </div>
             <button onclick="addToBill('beetrootQty','BeetRoot',50)">Add to Bill</button>
         </article>
         <article>
@@ -539,6 +649,9 @@ document.addEventListener("click", function (event) {
           <p>Calories: 16 kcal</p>
           <p>Main Vitamin: Vitamin K</p>
           <label for="cucumberQty">Enter Quantity (in kg):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('cucumberQty')">-</button>
+
   <input 
     type="number" 
     id="cucumberQty" 
@@ -546,8 +659,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+   value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('cucumberQty')">+</button>
+  </div>
             <button onclick="addToBill('cucumberQty','Cucumber',50)">Add to Bill</button>
         </article>
         <article>
@@ -556,6 +672,9 @@ document.addEventListener("click", function (event) {
           <p>Calories: 40 kcal</p>
           <p>Main Vitamin: Vitamin C</p>
           <label for="chilliQty">Enter Quantity (in kg):</label>
+          <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('chilliQty')">-</button>
+
   <input 
     type="number" 
     id="chilliQty" 
@@ -563,8 +682,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+   value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('chilliQty')">+</button>
+  </div>
             <button onclick="addToBill('chilliQty','Chilli',60)">Add to Bill</button>
         </article>
         <article>
@@ -573,6 +695,9 @@ document.addEventListener("click", function (event) {
           <p>Calories: 19 kcal</p>
           <p>Main Vitamin: Vitamin C</p>
           <label for="chowQty">Enter Quantity (in kg):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('chowQty')">-</button>
+
   <input 
     type="number" 
     id="chowQty" 
@@ -580,8 +705,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('chowQty')">+</button>
+  </div>
             <button onclick="addToBill('chowQty','Chow',40)">Add to Bill</button>
         </article>
         <article>
@@ -590,6 +718,9 @@ document.addEventListener("click", function (event) {
            <p>Calories: 47 kcal</p>
           <p>Main Vitamin: Vitamin B1</p>
           <label for="avaraiQty">Enter Quantity (in kg):</label>
+          <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('avaraiQty')">-</button>
+
   <input 
     type="number" 
     id="avaraiQty" 
@@ -597,8 +728,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+    value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('avaraiQty')">+</button>
+  </div>
            <button onclick="addToBill('avaraiQty','Avarai',80)">Add to Bill</button>
         </article>
 
@@ -608,6 +742,9 @@ document.addEventListener("click", function (event) {
           <p>Calories: 33 kcal</p>
           <p>Main Vitamin: Vitamin C</p>
           <label for="ladysfingerQty">Enter Quantity (in kg):</label>
+          <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('ladysfingerQty')">-</button>
+
   <input 
     type="number" 
     id="ladysfingerQty" 
@@ -615,8 +752,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+     value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('ladysfingerQty')">+</button>
+  </div>
             <button onclick="addToBill('ladysfingerQty','LadysFinger',50)">Add to Bill</button>
         </article>
       <article>
@@ -625,6 +765,9 @@ document.addEventListener("click", function (event) {
            <p>Calories: 43 kcal</p>
           <p>Main Vitamin: Vitamin C</p>
           <label for="kothavaraiQty">Enter Quantity (in kg):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('kothavaraiQty')">-</button>
+
   <input 
     type="number" 
     id="kothavaraiQty" 
@@ -632,8 +775,11 @@ document.addEventListener("click", function (event) {
     step="0.25" 
     min="0.0" 
     max="100" 
-    placeholder="e.g., 1.25"
+  value="0"
   >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('kothavaraiQty')">+</button>
+  </div>
             <button onclick="addToBill('kothavaraiQty','Kothavarai',50)">Add to Bill</button>
           
       </article>
