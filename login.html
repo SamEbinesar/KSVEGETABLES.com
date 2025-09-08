@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <style>
+  <title>KS Veg Login</title>
+    <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     input, button, textarea { width: 100%; margin: 8px 0; padding: 8px; }
     input{ 
@@ -34,113 +34,213 @@ label {
 }
     
   </style>
-  <link rel="stylesheet" href="style.css"/>
-
+   <link rel="stylesheet" href="style.css"/>
 </head>
-
-<script src="script.js"></script>
 <body>
-  <h2>Customer Login</h2>
+  <div id="askaccount">
+    <br><br>
+    <h2>Do you have account ?</h2>
+    <button onclick="yes()">Yes</button>
+    <button onclick="no()">No</button>
+  </div>
+  <div id="afterconform" style="display: none;">
+  <h2 id="loginhead">Customer Login</h2>
 
   <label for="mobile">Mobile Number:</label>
   <input type="text" id="mobile" placeholder="Enter mobile number" />
-  <button onclick="sendOTP()">Generate OTP</button>
 
-  <div id="stepOTP" style="display:none;">
-    <label for="otp">Enter OTP:</label>
-    <input type="text" id="otp" placeholder="Enter OTP" />
-    <button onclick="verifyOTP()">Verify OTP</button>
-  </div>
+  <label for="password">Password:</label>
+  <input type="password" id="password" placeholder="Enter 6-digit password" />
 
+  <button id="loginbtn" onclick="loginUser()">Login</button>
+  <button id="registerbtn" onclick="registerUser()" style="display: none;" >Register</button>
+</div>
   <div id="stepDetails" style="display:none;">
     <label for="name">Name:</label>
     <input type="text" id="name" placeholder="Enter your name" />
     <label for="address">Address:</label>
     <textarea id="address" placeholder="Enter your address"></textarea>
-    <button onclick="saveDetails()">Save</button>
+    <button onclick="saveDetails()">Save Details</button>
   </div>
-  <div id="finalStep" style="display:none">
-    <button onclick="closeLoginpage()">Order now -></button>
-  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
   <script>
-    let generatedOTP = null;
+    // 🔑 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXOY6MTSvCosLY4oSxjLqpZ6qLUPhifGU",
+      authDomain: "ksvegetables-3959d.firebaseapp.com",
+      projectId: "ksvegetables-3959d",
+      storageBucket: "ksvegetables-3959d.firebasestorage.app",
+      messagingSenderId: "791132153293",
+      appId: "1:791132153293:web:2fb8a42dd2262fd48b9084"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    function sendOTP() {
+  
+    // ✅ Register User
+    function registerUser() {
       const mobile = document.getElementById("mobile").value.trim();
-
-      if (mobile === "" || mobile.length !== 10 || isNaN(mobile)) {
-        alert("⚠️ Please enter a valid 10-digit mobile number");
+      const password = document.getElementById("password").value.trim();
+      if (!/^[0-9]{10}$/.test(mobile)) {
+        alert("⚠️ Enter valid 10-digit mobile");
         return;
       }
+       if (mobile === "" || mobile.length !== 10 || isNaN(mobile)) {
+    alert("⚠️ Please enter a valid 10-digit mobile number!");
+    return;
+  }
+  
+  // ✅ Validate password
+  if (password.length ===0) {
+    alert("Please enter 6-digit password!");
+    return;
+  }
+  if (password.length !== 6 || isNaN(password)) {
+    alert("⚠️ Password must be exactly 6 digits!");
+    return;
+  }
 
-      // Generate 6-digit random OTP
-      generatedOTP = Math.floor(100000 + Math.random() * 900000);
 
-      alert("✅ OTP sent to " + mobile + "\n(For testing, OTP is: " + generatedOTP + ")");
-      document.getElementById("stepOTP").style.display = "block";
+      const fakeEmail = mobile + "@ksveg.com";
+
+      firebase.auth().createUserWithEmailAndPassword(fakeEmail, password)
+        .then(userCredential => {
+          const user = userCredential.user;
+
+          // save minimal details first
+          return db.collection("users").doc(user.uid).set({
+            phone: mobile,
+            name: "",
+            address: ""
+          });
+        })
+        .then(() => {
+          alert("✅Your mobile number is registered successfully! Please add your details.");
+          document.getElementById("stepDetails").style.display = "block";
+        })
+        .catch(error => {
+          alert("❌ Registration failed: " + error.message);
+        });
     }
 
-    function verifyOTP() {
-      const enteredOTP = document.getElementById("otp").value.trim();
+    // ✅ Login User
+function loginUser() {
+  const mobile = document.getElementById("mobile").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const fakeEmail = mobile + "@ksveg.com";
 
-      if (enteredOTP === "") {
-        alert("⚠️ Please enter the OTP");
-        return;
-      }
+  // ✅ Validate mobile
+  if (mobile === "" || mobile.length !== 10 || isNaN(mobile)) {
+    alert("⚠️ Please enter a valid 10-digit mobile number!");
+    return;
+  }
 
-      if (enteredOTP == generatedOTP) {
-        alert("✅ OTP Verified Successfully!");
-        document.getElementById("stepDetails").style.display = "block";
-      } else {
-        alert("❌ Invalid OTP. Please try again.");
-      }
-    }
+  // ✅ Validate password
+  if (password.length !== 6 || isNaN(password)) {
+    alert("⚠️ Password must be exactly 6 digits!");
+    return;
+  }
 
-    function saveDetails() {
-        const enteredName = document.getElementById("name").value.trim();
-        const enteredAddress = document.getElementById("address").value.trim();
-        if(enteredName === "" || enteredAddress === ""){
-            alert("Give your details properly");
+  // 🔐 Login
+  firebase.auth().signInWithEmailAndPassword(fakeEmail, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      return db.collection("users").doc(user.uid).get();
+    })
+    .then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        localStorage.setItem("customerName", data.name);
+        localStorage.setItem("customerMobile", data.phone);
+        localStorage.setItem("customerAddress", data.address);
+
+        alert("🎉 Welcome " + data.name + "! ");
+        if(data.phone === "9655723110") {
+           window.parent.setLogin();
+        window.parent.updateLoginStatus(); 
+        window.parent.closePopup();
+          window.parent.location.href = "admin.html";
         } else {
-            
-            alert("🎉 Details saved successfully! You can order now by clicking ORDER NOW ");
-            loginuser();
-            window.parent.setLogin();
-            window.parent.updateLoginStatus();
-            window.parent.location.href="index.html";
-            
-        }
+        window.parent.setLogin();
+        window.parent.updateLoginStatus();
+        window.parent.closePopup();
+        window.parent.location.href = "index.html";
+      } 
     }
-function loginuser() {
-    let name = document.getElementById("name").value;
-    let mobile = document.getElementById("mobile").value;
-    let address = document.getElementById("address").value;
-     localStorage.setItem("customerName", name);
-    localStorage.setItem("customerMobile", mobile);
-    localStorage.setItem("customerAddress", address);
+      else {
+        alert("⚠️ User exists but no details found. Please complete registration.");
+        document.getElementById("stepDetails").style.display = "block";
+      }
+    
+    })
+  
+    .catch(error => {
+      console.error("Login failed:", error.code, error.message);
+
+      if (error.code === "auth/user-not-found") {
+        alert("📌 This mobile number is not registered. Please register first!");
+        document.getElementById("loginhead").textContent = "Customer Register";
+        document.getElementById("loginbtn").style.display = "none";
+        document.getElementById("registerbtn").style.display = "block";
+      } else if (error.code === "auth/wrong-password" || error.message.includes("INVALID_LOGIN_CREDENTIALS")) {
+        alert("❌ Wrong mobile number or password. Try again.");
+      } else {
+        alert("❌ Login failed: " + error.message);
+      }
+    });
+}
+
+function yes() {
+  alert("Please Login your account!");
+  document.getElementById("askaccount").style.display="none";
+  document.getElementById("afterconform").style.display="block";
+}
+function no() {
+  alert("Please Register your account first!");
+  document.getElementById("askaccount").style.display="none";
+  document.getElementById("afterconform").style.display="block";
+   document.getElementById("loginhead").textContent = "Customer Register";
+        document.getElementById("loginbtn").style.display = "none";
+        document.getElementById("registerbtn").style.display = "block";
 
 }
-function closePopup() {
-     document.getElementById("loginPopup").style.display = "none";
-}
-function closeLoginpage() {
-        // Call parent's functions from inside iframe
-    window.parent.closePopup();  
- 
-    
-    // Redirect parent window to order.html
-   
-    window.parent.setLogin();
+    // ✅ Save Details (after registration)
+    function saveDetails() {
+      const name = document.getElementById("name").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const user = firebase.auth().currentUser;
+
+      if (!user) {
+        alert("⚠️ No logged-in user");
+        return;
+      }
+
+      if (!name || !address) {
+        alert("⚠️ Fill all details");
+        return;
+      }
+
+      db.collection("users").doc(user.uid).update({
+        name: name,
+        address: address
+      }).then(() => {
+        localStorage.setItem("customerName", name);
+        localStorage.setItem("customerMobile", user.email.split("@")[0]); // phone from email
+        localStorage.setItem("customerAddress", address);
+        alert("✅ Details saved successfully! You can now order vegetables now!");
+        window.parent.closePopup();
+         window.parent.setLogin();
     // Update navbar icon on parent page
     window.parent.updateLoginStatus();
-
-
-    if(billItems.length === 0) {
-      window.parent.location.href = "order.html";
-      alert(" Your Login info saved! Place your Order at KS Veg Now!");
-      } else {
-        alert("You have a pending Bill. Please order and complete your bill.");
-      } 
+        window.parent.location.href = "index.html";
+      }).catch(error => {
+        alert("❌ Error saving details: " + error.message);
+      });
     }
   </script>
 </body>
