@@ -646,27 +646,37 @@ document.addEventListener("DOMContentLoaded", showLoginStatus);
   }
 }
 
+function orderBill() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) {
+    alert("Please login first!");
+    document.getElementById("loginPopup").style.display = "block";
+    document.getElementById("loginFrame").src = "login.html";  
+    return;
+  }
 
-    function orderBill() {
-      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-      if (isLoggedIn) {
-        let now = new Date();
-        let dateTime = now.toLocaleString();
+  const customerMobile = localStorage.getItem("customerMobile");
+  const userKey = `orders_${customerMobile}`;
 
-        alert("Thank you for choosing KS Vegetables. Your order is confirmed at " + dateTime);
+  let now = new Date();
+  let dateTime = now.toLocaleString();
 
-        let orders = JSON.parse(localStorage.getItem("orders")) || [];
-        orders.push({ time: dateTime });
-        localStorage.setItem("orders", JSON.stringify(orders));
+  alert("Thank you for choosing KS Vegetables. Your order is confirmed at " + dateTime);
 
-      } else {
-        alert("Please login first!");
-        document.getElementById("loginPopup").style.display = "block";
-        document.getElementById("loginFrame").src = "login.html";  
-      }
-    }
-function vieworder(selectedDate = null) {
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  // Retrieve previous orders for this customer
+  let orders = JSON.parse(localStorage.getItem(userKey)) || [];
+
+  // Push new order
+  orders.push({ time: dateTime, totalAmount: getCartTotal(), items: getCartItems(), status: "Pending" });
+
+  // Save back per customer
+  localStorage.setItem(userKey, JSON.stringify(orders));
+}
+    
+    function vieworder(selectedDate = null) {
+  const customerMobile = localStorage.getItem("customerMobile"); // current user
+  const userKey = `orders_${customerMobile}`; 
+  let orders = JSON.parse(localStorage.getItem(userKey)) || [];
   let orderContainer = document.getElementById("ordersContainer");
 
   // Filter orders by date if selected
@@ -786,14 +796,15 @@ function normalizeItems(items) {
 
   // Fallback: unknown type -> empty
   return [];
-}
-function vieworderbill(index) {
-  const user = firebase.auth().currentUser;
-  if (!user) {
+}function vieworderbill(index) {
+  const userMobile = localStorage.getItem("customerMobile"); // your login key
+  if (!userMobile) {
     alert("Please login to view your orders.");
     return;
   }
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  const userKey = `orders_${userMobile}`;
+  const orders = JSON.parse(localStorage.getItem(userKey)) || [];
   const order = orders[index];
 
   if (!order) {
@@ -805,15 +816,14 @@ function vieworderbill(index) {
   const rawItems = order.items || order.billItems || order.cart || order.itemsList || order.items_string || order.itemsJson;
   const normalized = normalizeItems(rawItems);
 
-  // Attach order meta (time/status/index) and pass to renderer
   viewORDERBILL(normalized, {
     time: order.time || order.date || "",
-    status: order.status || "pending",
+    status: order.status || "Pending",
     orderNo: index + 1,
-    totalAmount: order.totalAmount || null // if you stored total separately
+    totalAmount: order.totalAmount || null
   });
-
 }
+
 function viewORDERBILL(billItems, meta = {}) {
   if (!Array.isArray(billItems) || billItems.length === 0) {
     alert("Your bill is empty!");
@@ -827,7 +837,7 @@ function viewORDERBILL(billItems, meta = {}) {
     <div class="bill-container">
       <p><strong>Order No:</strong> ${meta.orderNo || ""}</p><br>
       <p><strong>Placed On:</strong> ${meta.time || ""}</p>
-      <p><strong>Status:</strong> ${meta.status || ""}</p>
+     
       <ul>
         ${billItems.map(item => `
           <li style="display:flex; justify-content:space-between; margin:6px 0;">

@@ -220,6 +220,7 @@
   opacity: 0.8;
 }
 
+
   </style>
   
 </head>
@@ -413,6 +414,38 @@ document.getElementById("orderDate").addEventListener("change", (e) => {
 
 // Initial load
 loadOrders();
+// Real-time listener for new orders
+const ordersRef = db.collection("orders");
+
+ordersRef.onSnapshot((snapshot) => {
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === "added") {
+      const newOrder = change.doc.data();
+      showNotification(newOrder);   // Call notification
+      loadOrders();                // Refresh table if you want
+    }
+  });
+});
+
+// Browser notification function
+function showNotification(order) {
+  if (Notification.permission === "granted") {
+    new Notification("New Order Received!", {
+      body: `${order.customerName} placed an order of ₹${order.totalAmount}`,
+      icon: "icon.png"  // optional
+    });
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        new Notification("New Order Received!", {
+          body: `${order.customerName} placed an order of ₹${order.totalAmount}`,
+          icon: "icon.png"
+        });
+      }
+    });
+  }
+}
+
 
 // Clear all orders (Admin Only)
 function clearOrderHistory() {

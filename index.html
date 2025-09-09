@@ -119,15 +119,12 @@ function setLogin() {
   localStorage.setItem("isLoggedIn", "true");
   showLoginStatus();
 }
-
-// Call this function when logging out
 function logout() {
   localStorage.removeItem("isLoggedIn");
-
-  showLoginStatus();
-  window.location.href="index.html";
-}
-// Function to update nav UI safely
+  localStorage.removeItem("customerMobile");
+  localStorage.removeItem("customerName");
+  window.location.reload(); // or redirect to login page
+}// Function to update nav UI safely
 function showLoginStatus() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 

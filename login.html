@@ -154,28 +154,34 @@ function loginUser() {
     })
     .then(doc => {
       if (doc.exists) {
-        const data = doc.data();
-        localStorage.setItem("customerName", data.name);
-        localStorage.setItem("customerMobile", data.phone);
-        localStorage.setItem("customerAddress", data.address);
+    const data = doc.data();
+    localStorage.setItem("customerName", data.name);
+    localStorage.setItem("customerMobile", data.phone);
+    localStorage.setItem("customerAddress", data.address);
 
-        alert("🎉 Welcome " + data.name + "! ");
-        if(data.phone === "9655723110") {
-           window.parent.setLogin();
-        window.parent.updateLoginStatus(); 
-        window.parent.closePopup();
-          window.parent.location.href = "admin.html";
-        } else {
-        window.parent.setLogin();
-        window.parent.updateLoginStatus();
-        window.parent.closePopup();
-        window.parent.location.href = "index.html";
-      } 
+    // Set role
+    let role = "customer";
+    if(data.phone === "9655723110") {
+        role = "admin";
     }
-      else {
-        alert("⚠️ User exists but no details found. Please complete registration.");
-        document.getElementById("stepDetails").style.display = "block";
-      }
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("isLoggedIn", "true");
+
+    alert("🎉 Welcome " + data.name + "! ");
+
+    // ✅ Update parent page UI
+    window.parent.setLogin();
+    window.parent.updateLoginStatus();
+    window.parent.closePopup();
+
+    // ✅ Redirect based on role
+    if(role === "admin") {
+        window.parent.location.href = "admin.html";
+    } else {
+        window.parent.location.href = "index.html";
+    }
+}
+
     
     })
   
