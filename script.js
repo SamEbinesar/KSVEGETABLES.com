@@ -2,7 +2,6 @@
    function toggleMenu() {
     document.querySelector(".profileiconmenu").classList.toggle("active");
   }
-
 function searchVegetable() {
   let input = document.getElementById("searchBar").value.toLowerCase();
   let articles = document.querySelectorAll(".products article");
@@ -27,6 +26,7 @@ function searchVegetable() {
     setTimeout(() => notFoundDiv.classList.add("show"), 10); // triggers animation
   }
 }
+
 let billItems = []; 
 let billItems2 = []; // stores vegetables and kg values
 function addToBill(inputId, vegName, amt) {
@@ -343,37 +343,90 @@ function editBill() {
     alert("You can only clear bill and then order again.");
 
     
+
 }
+
 function orderBill() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const loginNav = document.getElementById("loginNav");
-  const loginSuccessNav = document.getElementById("loginSuccessNav");
 
-  if (isLoggedIn) {
-    let now = new Date();
-    let dateTime = now.toLocaleString();
-
-    alert("Thank you for choosing KS Vegetables. Your order is confirmed at " + dateTime);
-
-
-    // Get existing orders or empty array
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-    // Push new order
-    orders.push({
-      time: dateTime, // bill details can be added later
-    });
-
-    // Save back to localStorage
-    localStorage.setItem("orders", JSON.stringify(orders));
-    window.parent.location.href="myorders.html";
-
-  } else {
+  if (!isLoggedIn) {
     alert("Please login first!");
     document.getElementById("loginPopup").style.display = "block";
     document.getElementById("loginFrame").src = "login.html";  
+    return;
   }
+
+  if (!billItems || billItems.length === 0) {
+    alert("⚠️ Your cart is empty!");
+    return;
+  }
+
+  let now = new Date();
+  let dateTime = now.toLocaleString();
+
+  const customerName = localStorage.getItem("customerName");
+  const customerMobile = localStorage.getItem("customerMobile");
+  const customerAddress = localStorage.getItem("customerAddress");
+
+  if (!customerName || !customerMobile || !customerAddress) {
+    alert("⚠️ Please update your profile details before ordering!");
+    return;
+  }
+
+  // ✅ Build items string and calculate total
+// ✅ Save full details of each item
+const itemsArr = billItems.map(item => {
+  const quantity = item.kg;
+  const price = item.a; // fallback to 0 if missing
+
+  return {
+    name: item.name || "Unknown",
+    qty: quantity,
+    price: price
+  };
+});
+  const totalAmount = billItems
+    .reduce((sum, item) => {
+      const quantity = item.kg;
+      return sum + item.a ;
+    }, 0);
+
+  // ✅ Build order object
+  const orderData = {
+  uid: firebase.auth().currentUser ? firebase.auth().currentUser.uid : "guest",
+  customerName: customerName || "Unknown",
+  customerMobile: customerMobile || "Unknown",
+  customerAddress: customerAddress || "Unknown",
+  items: itemsArr,
+  totalAmount,
+  status: "pending",
+  time: dateTime,
+  timestamp: firebase.firestore.FieldValue.serverTimestamp()
+};
+
+  // ✅ Save to Firestore
+  db.collection("orders").add(orderData)
+    .then(() => {
+      alert(`✅ Thank you ${customerName}! Your order is confirmed at ${dateTime}`);
+
+     const userKey = `orders_${customerMobile}`; // or use uid: `orders_${firebase.auth().currentUser.uid}`
+
+let orders = JSON.parse(localStorage.getItem(userKey)) || [];
+orders.push(orderData);
+localStorage.setItem(userKey, JSON.stringify(orders));
+      // Clear cart after placing order
+      billItems = [];
+      localStorage.removeItem("billItems");
+
+      window.parent.location.href = "myorders.html";
+    })
+    .catch(error => {
+      console.error("❌ Error saving order: ", error);
+      alert("⚠️ Could not confirm order. Try again.");
+    });
 }
+
+
 
 // Show all orders
 function vieworder() {
@@ -407,40 +460,35 @@ function vieworderbill(index) {
   // Later you can replace this with actual bill details
 }
 
+function viewORDERBILL(billItems) {
+  if (!billItems || billItems.length === 0) {
+    alert("Your bill is empty!");
+    return;
+  }
 
-  function viewORDERBILL() {
-   let savedbill = localStorage.getItem("lastBill"); 
+  // Calculate total
+  let totalAmount = billItems.reduce((sum, item) => sum + item.a, 0);
 
-    if (!savedbill) {
-        alert("Your bill is empty!");
-        return;
-    }
+  let billHTML = `
+    <h2>Your Bill</h2>
+    <div class="bill-container">
+      <ul>
+        ${billItems.map(item => `
+          <li>
+            <span class="veg-name">${item.name}</span>
+            <span class="kg-value">${item.kg} kg</span>
+            <span class="veg-amt">Rs.${item.a}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="total">Total: Rs.${totalAmount}</div>
+    </div>
+  `;
 
-    let billItems = JSON.parse(savedbill); 
-
-    // Calculate total
-    let totalAmount = billItems.reduce((sum, item) => sum + item.a, 0);
-
-
-    let billHTML = `
-        <h2>Your Bill</h2>
-        <div class="bill-container">
-        <ul>
-            ${billItems.map(item => `
-                <li>
-                    <span class="veg-name">${item.name}</span>
-                    <span class="kg-value">${item.kg} kg</span>
-                    <span class="veg-amt">Rs.${item.a}</span>
-                </li>
-            `).join('')}
-        </ul>
-        <div class="total">Total: Rs.${totalAmount}</div>
-       </div>
-    `;
-
-    document.getElementById("billContainer").innerHTML = billHTML;
-    document.getElementById("billPopup").style.display = "block";
+  document.getElementById("billContainer").innerHTML = billHTML;
+  document.getElementById("billPopup").style.display = "block";
 }
+
 
 function closeBillPopup() {
     document.getElementById("billPopup").style.display = "none";
@@ -555,4 +603,3 @@ window.onload = function () {
 
 // Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
-

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KS Vegetables - Admin Orders</title>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f4f4;
+    }
+    nav {
+      background: #28a745;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .container {
+      width: 90%;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #28a745;
+      color: white;
+    }
+    
+
+/* Popup styles */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Popup content */
+.popup-content {
+    position: relative;
+    width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Close button (X) */
+.close-btn {
+    position: absolute;
+    
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: red;
+}
+
+
+    
+/* Bill Popup Styling */
+#billContainer h2 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+.bill-container {
+   max-height: 80vh;   /* keep within screen height */
+  overflow-y: auto;   /* enable scroll if needed */
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 350px;
+    margin: auto;
+}
+
+.bill-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.bill-container li {
+    background: #ecf0f1;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.veg-name { font-weight: bold; color: #34495e; }
+.kg-value { color: #27ae60; }
+.veg-amt { color: #c0392b; }
+
+.total {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: right;
+    color: #2c3e50;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    color: white;
+}
+
+#billPopup {
+   position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);  /* dim background */
+    display: none;
+    justify-content: center;
+    align-items: flex-start; /* aligns content to top */
+    overflow-y: auto; /* allow scroll if content is tall */
+    padding-top: 30px; /* small gap from very top */
+    z-index: 9999;
+}
+
+
+.viewbill  {
+  background-color: #28a745;   /* Green background */
+    color: white;                /* White text */
+    border: none;                /* Remove border */
+    padding: 10px 20px;          /* Add spacing */
+    border-radius: 20px;         /* Rounded corners */
+    font-size: 14px;             /* Font size */
+    font-weight: bold;
+    cursor: pointer;             /* Pointer on hover */
+    margin-top: 10px;            /* Space from text above */
+    display: block;              /* Center align */
+    text-align: left;
+    transition: 0.3s ease;
+}
+.viewbill :hover {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 8px rgba(39,174,96,0.5);
+  transform: scale(1.05);
+}
+/* Confirm button */
+.conformation {
+    border-radius: 20px;
+}
+.conformation:hover {
+  background: #218838;   /* darker green */
+  transform: scale(1.05);
+}
+
+/* Confirmed button */
+.confirmed {
+  background: #40fc27;   /* grey */
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Confirmed button */
+.notconfirmed{
+  background: #fd6638;   /* grey */
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+  </style>
+  
+</head>
+<body>
+
+  <!-- ✅ Navigation -->
+  <nav>
+    <div><strong>KS Vegetables - Admin</strong></div>
+    <div>
+      <a href="admin.html">Home</a>
+      
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
+  <!-- ✅ Main -->
+   <div style="margin: 15px 0; text-align: right;">
+  <button id="clearHistoryBtn" 
+          style="padding: 8px 14px; background: #e63946; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
+    🗑 Clear History
+  </button>
+  
+</div>
+
+  <div class="container">
+     <div>
+    <label for="orderDate">Select Date: </label>
+    <input type="date" id="orderDate" />
+</div>
+    <h2>📦 Received Orders</h2>
+    <table id="ordersTable">
+      <thead>
+        <tr>
+          <th>Customer Name</th>
+          <th>Address/Shop Name</th>
+          <th>Received on</th>
+          <th>Mobile Number</th>
+          <th>Order Details</th>
+          <th>Order Status</th>
+        </tr>
+      </thead>
+      <tbody id="ordersBody">
+        <!-- Orders will appear here -->
+      </tbody>
+    </table>
+  </div>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    // 🔑 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXOY6MTSvCosLY4oSxjLqpZ6qLUPhifGU",
+      authDomain: "ksvegetables-3959d.firebaseapp.com",
+      projectId: "ksvegetables-3959d",
+      storageBucket: "ksvegetables-3959d.firebasestorage.app",
+      messagingSenderId: "791132153293",
+      appId: "1:791132153293:web:2fb8a42dd2262fd48b9084"
+    }; if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+
+    let fetchedOrders = []; // store all fetched orders
+
+// ✅ Fetch Orders from Firestore (same name as original)
+function loadOrders() {
+  const ordersBody = document.getElementById("ordersBody");
+  ordersBody.innerHTML = "<tr><td colspan='5'>⏳ Checking authentication...</td></tr>";
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      const adminUID = "Q4Qyeu98jyb2YaDqoPDGfhrgZ9V2";
+      if (user.uid !== adminUID) {
+        ordersBody.innerHTML = "<tr><td colspan='5'>❌ You are not authorized to view orders.</td></tr>";
+        return;
+      }
+
+      ordersBody.innerHTML = "<tr><td colspan='5'>⏳ Loading orders...</td></tr>";
+
+      db.collection("orders").orderBy("timestamp", "desc").get()
+        .then(snapshot => {
+          ordersBody.innerHTML = "";
+          fetchedOrders = []; // clear previous
+
+          if (snapshot.empty) {
+            ordersBody.innerHTML = "<tr><td colspan='5'>No orders received yet.</td></tr>";
+            return;
+          }
+
+          snapshot.forEach(doc => {
+            const order = doc.data();
+            order.id = doc.id;
+            fetchedOrders.push(order); // save for filtering
+
+            const row = `
+              <tr>
+                <td>${order.customerName || "N/A"}</td>
+                <td>${order.customerAddress || "N/A"}</td>
+                <td>${order.time || "N/A"}</td>
+                <td>${order.customerMobile || "N/A"}</td>
+                <td>
+                  <button class="viewbill" id="viewbill-${doc.id}" onclick="viewbillbtn('${doc.id}')">View Bill</button>
+                </td>
+                <td>
+                  <button class="conformation" 
+                    id="conformation-${doc.id}" 
+                    style="${order.status === 'pending' ? 'display:inline-block;' : 'display:none;'}" 
+                    onclick="conformorder('${doc.id}')">Confirm</button>
+                  <button class="confirmed" 
+                    id="confirmed-${doc.id}" 
+                    style="${order.status === 'confirmed' ? '' : 'display:none;'}">✅ Confirmed</button>
+                  <button class="notconfirmed" 
+                    id="notconfirmed-${doc.id}" 
+                    style="${order.status === 'cancelled' ? '' : 'display:none;'}">❌ Cancelled</button>
+                </td>
+              </tr>
+            `;
+
+            ordersBody.innerHTML += row;
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching orders:", error);
+          ordersBody.innerHTML = "<tr><td colspan='5'>❌ Failed to load orders.</td></tr>";
+        });
+
+    } else {
+      ordersBody.innerHTML = "<tr><td colspan='5'>❌ You must log in to view orders.</td></tr>";
+    }
+  });
+}
+
+// ✅ Filter orders by selected date
+function filterOrdersByDate(selectedDate) {
+  if (!selectedDate) {
+    // show all
+    rebuildOrdersTable(fetchedOrders);
+    return;
+  }
+
+  const filtered = fetchedOrders.filter(order => {
+    if (!order.time) return false;
+    const orderDateStr = new Date(order.time).toISOString().split("T")[0]; // yyyy-mm-dd
+    return orderDateStr === selectedDate;
+  });
+
+  rebuildOrdersTable(filtered);
+}
+
+// ✅ Helper to rebuild table from an array
+function rebuildOrdersTable(ordersArray) {
+  const ordersBody = document.getElementById("ordersBody");
+  ordersBody.innerHTML = "";
+
+  if (ordersArray.length === 0) {
+    ordersBody.innerHTML = "<tr><td colspan='5'>No orders found.</td></tr>";
+    return;
+  }
+
+  ordersArray.forEach(order => {
+    const row = `
+      <tr>
+        <td>${order.customerName || "N/A"}</td>
+        <td>${order.customerAddress || "N/A"}</td>
+        <td>${order.time || "N/A"}</td>
+        <td>${order.customerMobile || "N/A"}</td>
+        <td>
+          <button class="viewbill" onclick="viewbillbtn('${order.id}')">View Bill</button>
+        </td>
+        <td>
+          <button class="conformation" 
+            style="${order.status === 'pending' ? 'display:inline-block;' : 'display:none;'}" 
+            onclick="conformorder('${order.id}')">Confirm</button>
+          <button class="confirmed" 
+            style="${order.status === 'confirmed' ? '' : 'display:none;'}">✅ Confirmed</button>
+          <button class="notconfirmed" 
+            style="${order.status === 'cancelled' ? '' : 'display:none;'}">❌ Cancelled</button>
+        </td>
+      </tr>
+    `;
+    ordersBody.innerHTML += row;
+  });
+}
+
+// Listen for date change
+document.getElementById("orderDate").addEventListener("change", (e) => {
+  filterOrdersByDate(e.target.value);
+});
+
+// Initial load
+loadOrders();
+
+// Clear all orders (Admin Only)
+function clearOrderHistory() {
+  if (!confirm("⚠️ Are you sure you want to delete ALL orders? This action cannot be undone.")) {
+    return;
+  }
+
+  db.collection("orders").get().then(snapshot => {
+    const batch = db.batch();
+    snapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    return batch.commit();
+  })
+  .then(() => {
+    alert("✅ Order history cleared!");
+    document.getElementById("ordersBody").innerHTML = "<tr><td colspan='5'>No orders available.</td></tr>";
+  })
+  .catch(err => {
+    console.error("Error clearing history:", err);
+    alert("❌ Failed to clear order history.");
+  });
+}
+
+// Attach event listener
+document.getElementById("clearHistoryBtn").addEventListener("click", clearOrderHistory);
+
+function conformorder(orderId) {
+  if (confirm("Are you sure you want to confirm this order?")) {
+    db.collection("orders").doc(orderId).update({
+      status: "confirmed"
+    }).then(() => {
+      document.getElementById(`conformation-${orderId}`).style.display = "none";
+      document.getElementById(`confirmed-${orderId}`).style.display = "inline-block";
+    }).catch(err => {
+      console.error("Error confirming order:", err);
+      alert("⚠️ Could not confirm order.");
+    });
+  } else {
+    db.collection("orders").doc(orderId).update({
+      status: "cancelled"
+    }).then(() => {
+      document.getElementById(`conformation-${orderId}`).style.display = "none";
+      document.getElementById(`notconfirmed-${orderId}`).style.display = "inline-block";
+    }).catch(err => {
+      console.error("Error cancelling order:", err);
+      alert("⚠️ Could not cancel order.");
+    });
+  }
+}
+
+
+    // ✅ Logout
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        localStorage.clear();
+        window.location.href = "index.html";
+      });
+    }
+
+function viewbillbtn(orderId) {
+    db.collection("orders").doc(orderId).get()
+      .then(doc => {
+        if (!doc.exists) {
+          alert("❌ Bill not found!");
+          return;
+        }
+
+        let order = doc.data();
+        let billItems = order.items || [];
+        let totalAmount = order.totalAmount || 0;
+
+        let billHTML = `
+            <h2>Bill details</h2>
+            <div class="bill-container">
+            <ul>
+                ${billItems.map(item => `
+                    <li>
+                        <span class="veg-name">${item.name}</span>
+                        <span class="kg-value">${item.qty || item.quantity || 0} kg</span>
+                        <span class="veg-amt">Rs.${item.price || 0}</span>
+                    </li>
+                `).join('')}
+            </ul>
+            <div class="total">Total: Rs.${totalAmount}</div>
+            </div>
+        `;
+
+        document.getElementById("billContainer").innerHTML = billHTML;
+        document.getElementById("billPopup").style.display = "block";
+      })
+      .catch(err => {
+        console.error("Error fetching bill:", err);
+        alert("⚠️ Could not load bill. Try again.");
+      });
+}
+function closeBillPopup() {
+    document.getElementById("billPopup").style.display = "none";
+}
+    // ✅ Load orders when page opens
+    window.onload = loadOrders;
+  </script>
+  
+  <!-- Bill Popup -->
+<div id="billPopup" class="popup">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closeBillPopup()">&times;</span>
+    <div id="billContainer"></div>
+  </div>
+</div>
+
+
+</body>
+</html>

@@ -17,15 +17,14 @@
       <!-- Center: Title -->
       <div class="nav-center">
         <h1>  K S Vegetables</h1>
-        <p>Fresh Vegetables Available</p>
+        <p>Admin Page</p>
       </div>
        
       <!-- Right: Links -->
       <div class="nav-right">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="order.html">To Order</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="admin.html">Home</a></li>
+          <li> <a href="#" onclick="checkloginvieworder()" >Vieworder</a></li>
           <li><a id="loginNav" href="#" onclick="openLogin()">Login/Register</a></li>
           <li id="loginSuccessNav" style="display:none;">✅Loggedin| </li>
             <li id="profileMenu" class="profile-menu" style="display:none;">
@@ -33,8 +32,8 @@
 
                 <ul class="dropdown"  id="DD" style="display: none;">
                   
-                   <li><a href="profile.html">My Profile</a></li>
-                   <li><a href="myorders.html">My Orders</a></li>
+                   <li><a href="#" onclick="checkloginadmin()">My Profile</a></li>
+                   <li><a href="#" onclick="checkloginvieworder()">ViewOrders</a></li>
                    
                   <li><a href="#" onclick="logout()">Logout</a></li>
                 </ul>
@@ -48,7 +47,7 @@
         <div class="profileiconmenu"  >
       <ul id="mobileDD">
      <li> <a href="#" onclick="checkloginprofile()">My Profile</a></li>
-     <li><a href="#" onclick="checkloginorder()">My Orders</a></li>
+     <li><a href="#" onclick="checkloginorder()">ViewOrders</a></li>
      <li>
       <a href="#" id="loginham" onclick="openLogin()" style="display: none;">Login/Register</a>
       <a href="#" id="loginSuccessham" onclick="logout()" style="display: none;">Logout</a>
@@ -59,17 +58,13 @@
     
          <!-- Sticky Bottom Nav (only for mobile) -->
 <nav class="mobile-nav">
-  <a href="index.html" class="nav-item">
+  <a href="admin.html" class="nav-item">
     <i class="fas fa-home"></i>
     <span>Home</span>
   </a>
-  <a href="order.html" class="nav-item">
+  <a href="#" onclick="checkloginvieworder()" class="nav-item">
     <i class="fas fa-shopping-cart"></i>
-    <span>Order</span>
-  </a>
-  <a href="contact.html" class="nav-item">
-    <i class="fas fa-phone"></i>
-    <span>Contact</span>
+    <span>vieworder</span>
   </a>
   <a href="#" onclick="openLogin()" id="loginicon" class="nav-item" style="display: none;">
     <i class="fas fa-user"></i>
@@ -92,18 +87,36 @@
 
   <main class="home-main">
   <div class="home-content">
-    <h2 class="center-text">Welcome to K S Vegetables</h2>
-    <p class="sub-text">Your trusted place for fresh vegetables every day.</p>
+    <h2 class="center-text">Welcome  K S Mariappan</h2>
+    
     <div class="order-now">
-      <a href="order.html">Order Now!</a>
+      <a href="#" onclick="checkloginvieworder()" >View received orders </a>
     </div>
   </div>
 </main>
+
 <script>
 function closePopup() {
      document.getElementById("loginPopup").style.display = "none";
 }
-
+function checkloginadmin() {
+   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if(isLoggedIn) {
+    window.location.href = "adprofile.html";
+  } else {
+    alert("Please Login first!");
+    openLogin();
+  }
+}
+function checkloginvieworder() {
+   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if(isLoggedIn) {
+    window.location.href="vieworders.html";
+  }else {
+    alert("Please Login First!");
+    openLogin();
+  }
+}
 
 function updateLoginStatus() {
   // hide login button
@@ -125,12 +138,12 @@ function logout() {
   localStorage.removeItem("isLoggedIn");
 
   showLoginStatus();
-  window.location.href="index.html";
+  window.location.href="admin.html";
 }
-// Function to update nav UI safely
+
+// Function to update nav UI
 function showLoginStatus() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-
   const loginNav = document.getElementById("loginNav");
   const loginSuccessNav = document.getElementById("loginSuccessNav");
   const loginSuccessicon = document.getElementById("loginSuccessicon");
@@ -139,19 +152,17 @@ function showLoginStatus() {
   const loginSuccessham = document.getElementById("loginSuccessham");
 
   if (isLoggedIn) {
-    if (loginNav) loginNav.style.display = "none";
-    if (loginSuccessNav) loginSuccessNav.style.display = "inline-block";
-    if (loginSuccessicon) loginSuccessicon.style.display = "flex";
-    if (loginSuccessham) loginSuccessham.style.display = "block";
+    loginNav.style.display = "none";
+    loginSuccessNav.style.display = "inline-block";
+    loginSuccessicon.style.display="flex";
+    loginSuccessham.style.display="block";
   } else {
-    if (loginNav) loginNav.style.display = "inline-block";
-    if (loginSuccessNav) loginSuccessNav.style.display = "none";
-    if (loginicon) loginicon.style.display = "flex";
-    if (loginham) loginham.style.display = "block";
+    loginNav.style.display = "inline-block";
+    loginSuccessNav.style.display = "none";
+    loginicon.style.display="flex";
+    loginham.style.display="block";
   }
 }
-
-
  function usericon() {
   let dropdown = document.getElementById("DD");
   if (dropdown.style.display === "block") {
@@ -163,7 +174,7 @@ function showLoginStatus() {
 function checkloginprofile() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   if(isLoggedIn) {
-    window.location.href="profile.html";
+    window.location.href="adprofile.html";
   } else {
     alert("Please login first!");
     openLogin();
@@ -172,12 +183,13 @@ function checkloginprofile() {
 function checkloginorder() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   if(isLoggedIn) {
-    window.location.href="myorders.html";
+    window.location.href="vieworders.html";
   } else {
     alert("Please login first!");
     openLogin();
   } 
-}// Run on every page load
+}
+// Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -239,4 +251,3 @@ document.addEventListener("click", function (event) {
   
 </body>
 </html>
-

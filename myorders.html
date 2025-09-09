@@ -223,6 +223,36 @@ footer {
   box-shadow: 0 0 8px rgb(0, 0, 0);
   transform: scale(1.05);
 }
+/* Container styling (optional) */
+label {
+  color: black;
+  
+  font-weight: 500;
+  margin-right: 8px;
+  font-family: Arial, sans-serif;
+}
+
+/* Date picker styling */
+#orderDate {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  transition: 0.3s;
+}
+
+/* On focus effect */
+#orderDate:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* Hover effect */
+#orderDate:hover {
+  border-color: #4CAF50;
+}
 
 /* Bill Popup Styling */
 /* Bill Popup Styling */
@@ -233,6 +263,8 @@ footer {
 }
 
 .bill-container {
+   max-height: 80vh;   /* keep within screen height */
+  overflow-y: auto;   /* enable scroll if needed */
     background: white;
     padding: 15px;
     border-radius: 10px;
@@ -290,7 +322,96 @@ footer {
     text-align: right;
     color: #2c3e50;
 }
+#billPopup {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);  /* dim background */
+    display: none;
+    justify-content: center;
+    align-items: flex-start; /* aligns content to top */
+    overflow-y: auto; /* allow scroll if content is tall */
+    padding-top: 30px; /* small gap from very top */
+    z-index: 9999;
+}
+/* Table wrapper */
+#ordersContainer {
+  margin: 20px auto;
+  width: 80%;
+  max-width: 700px;
+}
 
+/* Table */
+#ordersContainer table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Table header */
+#ordersContainer th {
+  background: #28a745; /* green */
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Table rows */
+#ordersContainer td {
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Alternate row color */
+#ordersContainer tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* Last row without border */
+#ordersContainer tr:last-child td {
+  border-bottom: none;
+}
+
+/* Status colors */
+#ordersContainer td:nth-child(4) {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+#ordersContainer td:nth-child(4):contains("pending") {
+  color: orange;
+}
+#ordersContainer td:nth-child(4):contains("confirmed") {
+  color: green;
+}
+#ordersContainer td:nth-child(4):contains("cancelled") {
+  color: red;
+}
+
+/* Buttons */
+#ordersContainer button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#ordersContainer button:hover {
+  background: #218838;
+  transform: scale(1.05);
+}
 
 
 /* Mobile view: center the button */
@@ -300,11 +421,56 @@ footer {
     display: block;
     margin: 20px auto;
   }
+  #billPopup {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);  /* dim background */
+    display: none;
+    justify-content: center;
+    align-items: flex-start; /* aligns content to top */
+    overflow-y: auto; /* allow scroll if content is tall */
+    padding-top: 30px; /* small gap from very top */
+    z-index: 9999;
+}
 }
 
 </style>
-<body>
+
 <body class="home-page">
+  
+    <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <script>
+    // 🔑 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXOY6MTSvCosLY4oSxjLqpZ6qLUPhifGU",
+      authDomain: "ksvegetables-3959d.firebaseapp.com",
+      projectId: "ksvegetables-3959d",
+      storageBucket: "ksvegetables-3959d.firebasestorage.app",
+      messagingSenderId: "791132153293",
+      appId: "1:791132153293:web:2fb8a42dd2262fd48b9084"
+    }; if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+  firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+          // User is logged in
+          showLoginStatus(); // Optional: update UI
+          vieworder(); // safely load orders
+      } else {
+          // User not logged in
+          showLoginStatus();
+          document.getElementById("ordersContainer").innerHTML = "<h2>Please login first</h2>";
+      }
+  });
+</script>
   <header>
     <nav class="navbar">
       <!-- Left: Logo -->
@@ -459,7 +625,10 @@ document.addEventListener("DOMContentLoaded", showLoginStatus);
 <div class="clearbill">
   <button class="clearbill-btn" onclick="clearOrders()">Clear order History</button>
 </div>
-
+    <div>
+    <label for="orderDate">Select Date: </label>
+    <input type="date" id="orderDate" />
+</div>
     <div id="ordersContainer"></div>
     
   </main>
@@ -496,37 +665,190 @@ document.addEventListener("DOMContentLoaded", showLoginStatus);
         document.getElementById("loginFrame").src = "login.html";  
       }
     }
+function vieworder(selectedDate = null) {
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  let orderContainer = document.getElementById("ordersContainer");
 
-    function vieworder() {
-      let orders = JSON.parse(localStorage.getItem("orders")) || [];
-      let orderContainer = document.getElementById("ordersContainer");
+  // Filter orders by date if selected
+  if (selectedDate) {
+    orders = orders.filter(order => {
+      if (!order.time) return false;
+      let orderDateStr = new Date(order.time).toISOString().split("T")[0]; // yyyy-mm-dd
+      return orderDateStr === selectedDate;
+    });
+  }
 
-      if (orders.length === 0) {
-        orderContainer.innerHTML = "<h2>No Order Placed</h2>";
+  if (orders.length === 0) {
+    if (selectedDate) {
+      orderContainer.innerHTML = "<h2>No orders for this date</h2>";
+    } else {
+      orderContainer.innerHTML = "<h2>No Order Placed</h2>";
+    }
+    return;
+  }
+
+  // Build table
+  let tableHTML = `
+    <table border="1" cellspacing="0" cellpadding="8">
+      <thead>
+        <tr>
+          <th>Order No</th>
+          <th>Placed On</th>
+          <th>Total Amount</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  orders.forEach((order, index) => {
+    tableHTML += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${order.time}</td>
+        <td>₹${order.totalAmount}</td>
+        <td>${order.status || "Pending"}</td>
+        <td>
+          <button class="viewbill" onclick="vieworderbill(${index})">View Bill</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tableHTML += `</tbody></table>`;
+  orderContainer.innerHTML = tableHTML;
+}
+
+// Date picker listener
+document.getElementById("orderDate").addEventListener("change", (e) => {
+  vieworder(e.target.value);
+});
+function normalizeItems(items) {
+  if (!items) return [];
+
+  // If it's already an array
+  if (Array.isArray(items)) {
+    return items.map(it => {
+      if (typeof it === 'string') {
+        // parse "Tomato x2 - ₹40" or "Tomato x2" or "Tomato"
+        const m = it.match(/(.+?)\s*[x×]\s*(\d+)(?:\s*[-–]\s*₹?\s*([\d.]+))?$/i)
+                || it.match(/(.+?)\s*[-–]\s*₹?\s*([\d.]+)$/); // fallback "Tomato - 40"
+        if (m && m[2]) {
+          // pattern 1 matched name x qty (maybe price)
+          return {
+            name: m[1].trim(),
+            qty: Number(m[2]) || 1,
+            a: m[3] ? Number(m[3]) : 0
+          };
+        } else if (m && m[2] === undefined && m[1] && m[2] === undefined) {
+          // unlikely, fallback to raw
+          return { name: it.trim(), qty: 1, a: 0 };
+        } else {
+          // no qty found
+          return { name: it.trim(), qty: 1, a: 0 };
+        }
+      } else if (typeof it === 'object' && it !== null) {
+        // object might contain many possible keys
+        const name = it.name || it.item || it.title || it.product || "Item";
+        const qty  = it.qty || it.quantity || it.kg || it.q || 1;
+        const a    = it.a || it.amount || it.price || it.total || it.lineTotal || 0;
+        return { name: String(name).trim(), qty: Number(qty) || 1, a: Number(a) || 0 };
       } else {
-        orderContainer.innerHTML = "";
-        orders.forEach((order, index) => {
-          let orderCard = document.createElement("div");
-          orderCard.classList.add("order-card");
-          orderCard.innerHTML = `
-            <h3>Order ${index + 1}</h3>
-            <p>Placed On: ${order.time}</p>
-            <button onclick="vieworderbill(${index})">View Bill</button>
-          `;
-          orderContainer.appendChild(orderCard);
-        });
+        return { name: String(it), qty: 1, a: 0 };
       }
-    }
+    });
+  }
 
-    function vieworderbill(index) {
-      let orders = JSON.parse(localStorage.getItem("orders")) || [];
-      let order = orders[index];
-      alert("Showing bill for: " + order.time);
-      viewORDERBILL();
+  // If items is a JSON string
+  if (typeof items === 'string') {
+    // try JSON parse
+    try {
+      const parsed = JSON.parse(items);
+      return normalizeItems(parsed);
+    } catch (e) {
+      // not JSON — try splitting by comma
+      return items.split(',').map(s => {
+        s = s.trim();
+        const m = s.match(/(.+?)\s*[x×]\s*(\d+)(?:\s*[-–]\s*₹?\s*([\d.]+))?$/i);
+        if (m) {
+          return { name: m[1].trim(), qty: Number(m[2]) || 1, a: m[3] ? Number(m[3]) : 0 };
+        }
+        // if string has "name - price"
+        const m2 = s.match(/(.+?)\s*[-–]\s*₹?\s*([\d.]+)/);
+        if (m2) {
+          return { name: m2[1].trim(), qty: 1, a: Number(m2[2]) || 0 };
+        }
+        return { name: s, qty: 1, a: 0 };
+      });
     }
+  }
 
-    // Load orders when page opens
-    window.onload = vieworder;
+  // Fallback: unknown type -> empty
+  return [];
+}
+function vieworderbill(index) {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    alert("Please login to view your orders.");
+    return;
+  }
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const order = orders[index];
+
+  if (!order) {
+    alert("Order not found!");
+    return;
+  }
+
+  // Try common fields that may hold items
+  const rawItems = order.items || order.billItems || order.cart || order.itemsList || order.items_string || order.itemsJson;
+  const normalized = normalizeItems(rawItems);
+
+  // Attach order meta (time/status/index) and pass to renderer
+  viewORDERBILL(normalized, {
+    time: order.time || order.date || "",
+    status: order.status || "pending",
+    orderNo: index + 1,
+    totalAmount: order.totalAmount || null // if you stored total separately
+  });
+
+}
+function viewORDERBILL(billItems, meta = {}) {
+  if (!Array.isArray(billItems) || billItems.length === 0) {
+    alert("Your bill is empty!");
+    return;
+  }
+
+  const totalAmount = billItems.reduce((sum, item) => sum + (Number(item.a) || 0), 0);
+
+  const billHTML = `
+    <h2>Your Bill</h2>
+    <div class="bill-container">
+      <p><strong>Order No:</strong> ${meta.orderNo || ""}</p><br>
+      <p><strong>Placed On:</strong> ${meta.time || ""}</p>
+      <p><strong>Status:</strong> ${meta.status || ""}</p>
+      <ul>
+        ${billItems.map(item => `
+          <li style="display:flex; justify-content:space-between; margin:6px 0;">
+            <span class="veg-name">${item.name}</span>
+            <span class="kg-value">${item.qty || item.kg} kg</span>
+            <span class="veg-amt">Rs.${(Number(item.a) || 0).toFixed(2)}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="total" style="text-align:right; font-weight:bold; margin-top:10px;">
+        Total: Rs.${(meta.totalAmount !== null ? Number(meta.totalAmount).toFixed(2) : totalAmount.toFixed(2))}
+      </div>
+    </div>
+  `;
+
+  document.getElementById("billContainer").innerHTML = billHTML;
+  document.getElementById("billPopup").style.display = "block";
+}
+
+
+  
   </script>
 
 <div id="loginPopup" class="popup">
