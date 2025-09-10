@@ -666,16 +666,19 @@ document.addEventListener("DOMContentLoaded", showLoginStatus);
   
   <script>
     // Clear orders from the page
-    function clearOrders() {
+   // Clear orders from localStorage
+function clearOrders() {
   if (confirm("Are you sure you want to clear all your orders?")) {
-    // Remove orders from localStorage
-    localStorage.removeItem("orders");
-    alert("Order history cleared!");
+    const customerMobile = localStorage.getItem("customerMobile");
+    const userKey = `orders_${customerMobile}`;
 
-    // Correct ID used here
-    document.getElementById("ordersContainer").innerHTML = "<p><b>No orders available.</p>";
+    localStorage.removeItem(userKey); // ✅ actually remove orders
+
+    alert("Order history cleared!");
+    document.getElementById("ordersContainer").innerHTML = "<p><b>No orders available.</b></p>";
   }
 }
+
 
 function orderBill() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -917,4 +920,5 @@ function viewORDERBILL(billItems, meta = {}) {
 </body>
 
 </html>
+
 
