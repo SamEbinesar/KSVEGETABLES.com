@@ -435,6 +435,37 @@ label {
     padding-top: 30px; /* small gap from very top */
     z-index: 9999;
 }
+  /* Add this to your CSS */
+.table-container {
+  width: 100%;
+  overflow-x: auto;   /* Horizontal scroll if content is too wide */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.viewbill {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  background: #28a745;
+  color: #fff;
+  cursor: pointer;
+}
+
+.viewbill:hover {
+  background: #218838;
+}
+
 }
 
 </style>
@@ -884,4 +915,5 @@ function viewORDERBILL(billItems, meta = {}) {
   </div>
 </div>
 </body>
+
 </html>
