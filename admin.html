@@ -232,6 +232,12 @@ document.addEventListener("click", function (event) {
 });
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  const role = localStorage.getItem("userRole");
+  if (role !== "admin") {
+    window.location.href = "index.html"; // kick non-admins back
+  }
+});
 
 </script>
 <!-- Login Popup -->
@@ -251,3 +257,4 @@ document.addEventListener("click", function (event) {
   
 </body>
 </html>
+
