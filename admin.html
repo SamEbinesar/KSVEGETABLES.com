@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>K S Vegetables - Home</title>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    @keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+}
+  </style>
 </head>
 <body class="home-page">
   <header>
@@ -88,15 +94,84 @@
   <main class="home-main">
   <div class="home-content">
     <h2 class="center-text">Welcome  K S Mariappan</h2>
-    
+    <div id="newOrderAlert" style="
+    display:none;
+    position:fixed;
+    top:10px;
+    right:10px;
+    background:red;
+    color:white;
+    padding:10px 20px;
+    font-weight:bold;
+    border-radius:5px;
+    z-index:1000;
+    animation: blink 1s infinite;">
+    New Order Received!
+    </div>
+    <audio id="orderSound" src="mixkit-happy-bells-notification-937.wav" preload="auto"></audio>
+
     <div class="order-now">
       <a href="#" onclick="checkloginvieworder()" >View received orders </a>
     </div>
   </div>
 </main>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 <script>
-function closePopup() {
+  const firebaseConfig = {
+      apiKey: "AIzaSyAXOY6MTSvCosLY4oSxjLqpZ6qLUPhifGU",
+      authDomain: "ksvegetables-3959d.firebaseapp.com",
+      projectId: "ksvegetables-3959d",
+      storageBucket: "ksvegetables-3959d.firebasestorage.app",
+      messagingSenderId: "791132153293",
+      appId: "1:791132153293:web:2fb8a42dd2262fd48b9084"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+let firstLoad = true; // prevent alert on initial fetch
+let lastSeenOrderId = localStorage.getItem("lastSeenOrderId") || null;
+
+db.collection("orders")
+  .orderBy("timestamp", "desc")
+  .limit(1)
+  .onSnapshot((snapshot) => {
+    if (snapshot.empty) return;
+
+    const newOrder = snapshot.docs[0];
+    const newOrderId = newOrder.id;
+
+    // 🚀 First time: just remember the latest order, no alert
+    if (!lastSeenOrderId) {
+      lastSeenOrderId = newOrderId;
+      localStorage.setItem("lastSeenOrderId", newOrderId);
+      return;
+    }
+
+    // ✅ Only show alert if a *different* order arrives
+    if (newOrderId !== lastSeenOrderId) {
+      const alertDiv = document.getElementById("newOrderAlert");
+      alertDiv.style.display = "block";
+
+      // 🔊 Play sound
+      const sound = document.getElementById("orderSound");
+      if (sound) {
+        sound.currentTime = 0; 
+        sound.play().catch(err => console.log("Autoplay blocked:", err));
+      }
+
+      setTimeout(() => {
+        alertDiv.style.display = "none";
+      }, 5000);
+
+      // Save this order as last seen
+      lastSeenOrderId = newOrderId;
+      localStorage.setItem("lastSeenOrderId", newOrderId);
+    }
+  });
+  function closePopup() {
      document.getElementById("loginPopup").style.display = "none";
 }
 function checkloginadmin() {
@@ -230,14 +305,15 @@ document.addEventListener("click", function (event) {
     dropdown.style.display = "none";
   }
 });
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const role = localStorage.getItem("userRole");
   if (role !== "admin") {
     window.location.href = "index.html"; // kick non-admins back
   }
 });
+
+
+
 
 </script>
 <!-- Login Popup -->
@@ -257,4 +333,3 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
-
