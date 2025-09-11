@@ -437,7 +437,7 @@ function formatDateTime(date) {
   const min = String(date.getMinutes()).padStart(2, '0');
   const ss = String(date.getSeconds()).padStart(2, '0');
 
-  return `${dd}-${mm}-${yyyy} ${hh}:${min}:${ss}`;
+  return `${yyyy}-${mm}-${dd} at ${hh}:${min}`;
 }
 
 // Show all orders
@@ -615,4 +615,5 @@ window.onload = function () {
 
 // Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
+
 
