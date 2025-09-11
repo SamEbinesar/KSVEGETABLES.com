@@ -435,6 +435,27 @@ document.addEventListener("click", function (event) {
   </div>
             <button onclick="addToBill('potatoQty','Potato',40)">Add to Bill</button>
             </article>
+         <article> 
+            <img src="https://5.imimg.com/data5/YL/UO/GLADMIN-24314370/murungai-vegetable-and-leaf-500x500.png" alt="Murungakai"> 
+            <h3>Drumsticks(Murungakai) Rs.80/Kg</h3>
+             <p>Calories: 37 kcal</p>
+              <p>Maiin Vitamin: Vitamin C</p> 
+              <label for="muruQty">Enter Quantity (in kg):</label>
+               <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('muruQty')">-</button>
+  <input 
+    type="number" 
+    id="muruQty" 
+    name="muruQty" 
+    step="0.25" 
+    min="0.0" 
+    max="100" 
+    value="0"
+  >
+  <button type="button" class="qty-btn increase" onclick="increaseQty('muruQty')">+</button>
+  </div>
+            <button onclick="addToBill('muruQty','Murungakai',80)">Add to Bill</button>
+            </article>
              
              <article> <img src="https://images.unsplash.com/photo-1668080319873-de40beceae80?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Raddish">
                      <h3>Raddish Rs.40/Kg</h3>
@@ -801,6 +822,30 @@ document.addEventListener("click", function (event) {
             <button onclick="addToBill('kothavaraiQty','Kothavarai',50)">Add to Bill</button>
           
       </article>
+      <article>
+        <img src="https://m.media-amazon.com/images/I/71XMKwfQCzL._UF894,1000_QL80_.jpg" alt="Kaalan(Mushroom)">
+        <h3>Mushroom(Kaalan) Rs.60/Box</h3>
+           <p>Calories: 30 kcal</p>
+          <p>Main Vitamin: Vitamin B</p>
+          <label for="mushQty">Enter Quantity (in boxes):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('mushQty')">-</button>
+
+  <input 
+    type="number" 
+    id="mushQty" 
+    name="mushQty" 
+    step="1"
+    min="0" 
+    max="100" 
+  value="0"
+  >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('mushQty')">+</button>
+  </div>
+            <button onclick="addToBillnotKg('mushQty','Kaalan(Mushroom)',60)">Add to Bill</button>
+          
+      </article>
 
       <article>
         <img src="https://5.imimg.com/data5/VG/NL/MY-36312586/coriander-leaf-500x500.jpg" alt="Malli">
@@ -823,7 +868,7 @@ document.addEventListener("click", function (event) {
   
    <button type="button" class="qty-btn increase" onclick="increaseQty('MalliQty')">+</button>
   </div>
-            <button onclick="addToBill('MalliQty','Malli',40)">Add to Bill</button>
+            <button onclick="addToBillnotKg('MalliQty','Malli',40)">Add to Bill</button>
           
       </article>
 
@@ -848,15 +893,14 @@ document.addEventListener("click", function (event) {
   
    <button type="button" class="qty-btn increase" onclick="increaseQty('PudhinaQty')">+</button>
   </div>
-            <button onclick="addToBill('PudhinaQty','Pudhina',40)">Add to Bill</button>
+            <button onclick="addToBillnotKg('PudhinaQty','Pudhina',40)">Add to Bill</button>
           
       </article>
 
       <article>
         <img src="https://blog-images-1.pharmeasy.in/blog/production/wp-content/uploads/2022/06/07110401/18.jpg" alt="CurryLeaves">
         <h3>Karuvapillai Rs.50/Kg</h3>
-           <p>Calories: 43 kcal</p>
-          <p>Main Vitamin: Vitamin C</p><br>
+           
           <label for="KaruvapillaiQty">Enter Quantity (in kg):</label>
            <div class="qty-control">
             <button type="button" class="qty-btn decrease" onclick="decreaseQty('KaruvapillaiQty')">-</button>
@@ -880,9 +924,8 @@ document.addEventListener("click", function (event) {
       <article>
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ63RubjFeL0Jj2-QpMqQ7maSKX0_AKO3xnqg&s" alt="mallipudhinaMIX">
         <h3>Karuvapillai,Malli & Pudhina  Rs.10/Kattu</h3>
-           <p>Calories: 43 kcal</p>
-          <p>Main Vitamin: Vitamin C</p><br>
-          <label for="kmpQty">Enter Quantity (in kg):</label>
+           
+          <label for="kmpQty">Enter Quantity (in kattu):</label>
            <div class="qty-control">
             <button type="button" class="qty-btn decrease" onclick="decreaseQty('kmpQty')">-</button>
 
@@ -890,7 +933,7 @@ document.addEventListener("click", function (event) {
     type="number" 
     id="kmpQty" 
     name="kmpQty" 
-    step="10" 
+    step="1" 
     min="0.0" 
     max="100" 
   value="0"
@@ -898,7 +941,7 @@ document.addEventListener("click", function (event) {
   
    <button type="button" class="qty-btn increase" onclick="increaseQty('kmpQty')">+</button>
   </div>
-            <button onclick="addToBill('kmpQty','mallipudhinaMIX',10)">Add to Bill</button>
+            <button onclick="addToBillnotKg('kmpQty','mallipudhinaMIX',10)">Add to Bill</button>
           
       </article>
 
