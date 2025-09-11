@@ -659,6 +659,29 @@ document.addEventListener("click", function (event) {
             <button onclick="addToBill('capsicumQty','Capsicum',80)">Add to Bill</button>
 
         </article>
+              <article>
+          <img src="https://m.media-amazon.com/images/I/91EdPVzD99L.jpg" alt="Cauliflower">
+          <h3>Cauliflower Rs.50/Kg</h3>
+          <p>Calories: 25 kcal</p>
+          <p>Main Vitamin: Vitamin C</p>
+          <label for="cauliQty">Enter Quantity (in kg):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('cauliQty')">-</button>
+
+  <input 
+    type="number" 
+    id="cauliQty" 
+    name="cauliQty" 
+    step="0.25" 
+    min="0.0" 
+    max="100" 
+   value="0"
+  >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('cauliQty')">+</button>
+  </div>
+            <button onclick="addToBill('cauliQty','Cauliflower','50')">Add to Bill</button>
+        </article>
         <article>
           <img src="https://media.istockphoto.com/id/493446908/photo/fresh-sliced-beetroot-on-wooden-surface.webp?a=1&b=1&s=612x612&w=0&k=20&c=JAPVe31lBJa60G7D0EZoylcaVtp4wGIclGKoWHKbVDs=" alt="BeetRoot">
           <h3>BeetRoot Rs.50/Kg</h3>
@@ -1028,4 +1051,5 @@ function closeBillPopup() {
 
 </script>
 </body>
+
 </html>
