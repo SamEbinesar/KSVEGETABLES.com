@@ -716,8 +716,8 @@ function orderBill() {
   // Filter orders by date if selected
   if (selectedDate) {
     orders = orders.filter(order => {
-      if (!order.time) return false;
-      let orderDateStr = new Date(order.time).toISOString().split("T")[0]; // yyyy-mm-dd
+      let now = new Date();
+      let orderDateStr =formatDateTime(now);
       return orderDateStr === selectedDate;
     });
   }
@@ -768,6 +768,18 @@ function orderBill() {
 document.getElementById("orderDate").addEventListener("change", (e) => {
   vieworder(e.target.value);
 });
+    
+function formatDateTime(date) {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const yyyy = date.getFullYear();
+
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  const ss = String(date.getSeconds()).padStart(2, '0');
+ return `${yyyy}-${mm}-${dd}`;
+}
+
 function normalizeItems(items) {
   if (!items) return [];
 
@@ -920,5 +932,6 @@ function viewORDERBILL(billItems, meta = {}) {
 </body>
 
 </html>
+
 
 
