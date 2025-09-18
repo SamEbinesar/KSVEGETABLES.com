@@ -738,9 +738,9 @@ function orderBill() {
         <tr>
           <th>Order No</th>
           <th>Placed On</th>
+           <th>Action</th>
           <th>Total Amount</th>
-          <th>Status</th>
-          <th>Action</th>
+          
         </tr>
       </thead>
       <tbody>
@@ -751,11 +751,13 @@ function orderBill() {
       <tr>
         <td>${index + 1}</td>
         <td>${order.time}</td>
-        <td>₹${order.totalAmount}</td>
-        <td>${order.status || "Pending"}</td>
-        <td>
+         <td>
           <button class="viewbill" onclick="vieworderbill(${index})">View Bill</button>
         </td>
+        <td>₹${order.totalAmount}</td>
+       
+        
+       
       </tr>
     `;
   });

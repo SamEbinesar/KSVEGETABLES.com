@@ -45,6 +45,7 @@ function addToBill(inputId, vegName, amt) {
     
 }
 
+// stores vegetables and kg values
 function addToBillnotKg(inputId, vegName, amt) {
     let kgValue = document.getElementById(inputId).value;
 
@@ -60,7 +61,6 @@ function addToBillnotKg(inputId, vegName, amt) {
     }
     
 }
-
 
 function viewBill() {
     if (billItems.length === 0) {
@@ -631,6 +631,5 @@ window.onload = function () {
 
 // Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
-
 
 
