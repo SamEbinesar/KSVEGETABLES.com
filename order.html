@@ -991,6 +991,31 @@ document.addEventListener("click", function (event) {
             <button onclick="addToBill('abhiqty','AbhiKCP',205)">Add to Bill</button>
           
       </article>
+
+
+           <article>
+        <img src="https://salasdaily.com/cdn/shop/products/eggs_tray.jpg?v=1645686468" alt="Egg-Tray ">
+        <h3>Egg tray - Rs.175/tray</h3>
+           
+          <label for="eggQty">Enter Quantity (in tray):</label>
+           <div class="qty-control">
+            <button type="button" class="qty-btn decrease" onclick="decreaseQty('eggQty')">-</button>
+
+  <input 
+    type="number" 
+    id="eggQty" 
+    name="eggQty" 
+    step="1" 
+    min="0.0" 
+    max="100" 
+  value="0"
+  >
+  
+   <button type="button" class="qty-btn increase" onclick="increaseQty('eggQty')">+</button>
+  </div>
+            <button onclick="addToBillEgg('eggQty','Egg-Tray',175)">Add to Bill</button>
+          
+      </article>
 </section>
  </main>
   <footer>
@@ -1052,4 +1077,5 @@ function closeBillPopup() {
 
 </script>
 </body>
+
 </html>
