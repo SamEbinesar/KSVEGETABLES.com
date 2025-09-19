@@ -61,6 +61,21 @@ function addToBillnotKg(inputId, vegName, amt) {
     }
     
 }
+function addToBillEgg(inputId, vegName, amt) {
+    let kgValue = document.getElementById(inputId).value;
+
+    if (kgValue.trim() === "" || isNaN(kgValue) || kgValue <= 0) {
+        alert("Enter amount in kg");
+    } else {
+        let quantity = parseFloat(kgValue); // convert to number
+        let vegamount = amt * quantity; 
+        billItems.push({ name: vegName, kg: quantity, a: vegamount });
+        billItems2.push({ name: vegName, kg: quantity, a: vegamount }); 
+        alert(vegName + " (" + quantity + " Tray) " + "Rs." + vegamount + " added to bill");
+        localStorage.setItem("lastBill", JSON.stringify(billItems2));
+    }
+    
+}
 
 function viewBill() {
     if (billItems.length === 0) {
@@ -631,5 +646,6 @@ window.onload = function () {
 
 // Run on every page load
 document.addEventListener("DOMContentLoaded", showLoginStatus);
+
 
 
