@@ -133,31 +133,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-     const messaging = firebase.messaging();
-
-  Notification.requestPermission()
-    .then((permission) => {
-      if (permission === "granted") {
-        messaging.getToken({ vapidKey: "BFBr8CxLqxReI7mgH1ZBEwXtsk8XwdplQ6TCOiBzLxYb4eWlVvfB7bYsxU5Iq3Cg3p1G7JsGwHzLK28SrW_Xcyc" })
-          .then((currentToken) => {
-            if (currentToken) {
-              console.log("✅ FCM Token:", currentToken);
-              // 👉 Optionally save token to Firestore
-            }
-          })
-          .catch((err) => {
-            console.log("Error retrieving token. ", err);
-          });
-      }
-    });
-
-  messaging.onMessage((payload) => {
-    console.log("📩 Foreground message:", payload);
-    new Notification(payload.notification.title, {
-      body: payload.notification.body,
-      icon: payload.notification.icon || "order-icon.png"
-    });
-  });
+     
 let lastSeenOrderId = localStorage.getItem("lastSeenOrderId") || null;
 let firstLoad = true; // 🚀 prevent alert on initial fetch
 
@@ -206,7 +182,7 @@ db.collection("orders")
         // Optional: open orders page when clicked
         notif.onclick = () => {
           window.focus();
-          window.location.href = "orders.html";
+          window.location.href = "vieworders.html";
         };
       }
 
@@ -382,3 +358,4 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
