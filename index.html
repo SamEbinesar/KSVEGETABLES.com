@@ -120,11 +120,24 @@ function setLogin() {
   showLoginStatus();
 }
 function logout() {
-  localStorage.removeItem("isLoggedIn");
-  localStorage.removeItem("customerMobile");
-  localStorage.removeItem("customerName");
-  window.location.reload(); // or redirect to login page
-}// Function to update nav UI safely
+  let confirmLogout = confirm("Are you sure you want to log out?");
+
+  if (confirmLogout) {
+    // ✅ Clear all stored login data
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("customerMobile");
+    localStorage.removeItem("customerName");
+
+    // Reload or redirect to login page
+    window.location.reload(); 
+    // OR window.location.href = "login.html";
+  } else {
+    // ❌ Cancel logout
+    return;
+  }
+}
+
+// Function to update nav UI safely
 function showLoginStatus() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 

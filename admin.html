@@ -232,14 +232,21 @@ function setLogin() {
   localStorage.setItem("isLoggedIn", "true");
   showLoginStatus();
 }
-
 // Call this function when logging out
 function logout() {
-  localStorage.removeItem("isLoggedIn");
-
-  showLoginStatus();
-  window.location.href="admin.html";
+  let confirmLogout = confirm("Are you sure you want to log out?");
+  
+  if (confirmLogout) {
+    // ✅ User clicked "Yes"
+    localStorage.removeItem("isLoggedIn");
+    showLoginStatus();
+    window.location.href = "admin.html";
+  } else {
+    // ❌ User clicked "No"
+    return;
+  }
 }
+
 
 // Function to update nav UI
 function showLoginStatus() {

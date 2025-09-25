@@ -32,6 +32,21 @@ label {
   font-weight: bold;
   color: rgb(100, 255, 69);
 }
+.button-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #ffffff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
     
   </style>
    <link rel="stylesheet" href="style.css"/>
@@ -72,6 +87,19 @@ label {
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
   <script>
+
+    function showLoading(buttonId) {
+  const btn = document.getElementById(buttonId);
+  btn.disabled = true; 
+  btn.innerHTML = '<span class="button-spinner"></span> Please wait...';
+}
+
+// Restore button text
+function hideLoading(buttonId, text) {
+  const btn = document.getElementById(buttonId);
+  btn.disabled = false; 
+  btn.innerHTML = text;
+}
     // 🔑 Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAXOY6MTSvCosLY4oSxjLqpZ6qLUPhifGU",
@@ -87,20 +115,12 @@ label {
   
     // ✅ Register User
     function registerUser() {
-      const mobile = document.getElementById("mobile").value.trim();
-      const password = document.getElementById("password").value.trim();
-      if (!/^[0-9]{10}$/.test(mobile)) {
-        alert("⚠️ Enter valid 10-digit mobile");
-        return;
-      }
-       if (mobile === "" || mobile.length !== 10 || isNaN(mobile)) {
-    alert("⚠️ Please enter a valid 10-digit mobile number!");
-    return;
-  }
-  
-  // ✅ Validate password
-  if (password.length ===0) {
-    alert("Please enter 6-digit password!");
+  const mobile = document.getElementById("mobile").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  // validations...
+  if (!/^[0-9]{10}$/.test(mobile)) {
+    alert("⚠️ Enter valid 10-digit mobile");
     return;
   }
   if (password.length !== 6 || isNaN(password)) {
@@ -108,88 +128,82 @@ label {
     return;
   }
 
+  showLoading("registerbtn"); // 🔥 show spinner
 
-      const fakeEmail = mobile + "@ksveg.com";
+  const fakeEmail = mobile + "@ksveg.com";
+  firebase.auth().createUserWithEmailAndPassword(fakeEmail, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      return db.collection("users").doc(user.uid).set({
+        phone: mobile, name: "", address: ""
+      });
+    })
+    .then(() => {
+      hideLoading("registerbtn", "Register"); // restore button
+      alert("✅ Registered successfully! Please add your details.");
+      document.getElementById("stepDetails").style.display = "block";
+    })
+    .catch(error => {
+      hideLoading("registerbtn", "Register");
+      alert("❌ Registration failed: " + error.message);
+    });
+}
 
-      firebase.auth().createUserWithEmailAndPassword(fakeEmail, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-
-          // save minimal details first
-          return db.collection("users").doc(user.uid).set({
-            phone: mobile,
-            name: "",
-            address: ""
-          });
-        })
-        .then(() => {
-          alert("✅Your mobile number is registered successfully! Please add your details.");
-          document.getElementById("stepDetails").style.display = "block";
-        })
-        .catch(error => {
-          alert("❌ Registration failed: " + error.message);
-        });
-    }
-
-    // ✅ Login User
-function loginUser() {
+ function loginUser() {
   const mobile = document.getElementById("mobile").value.trim();
   const password = document.getElementById("password").value.trim();
   const fakeEmail = mobile + "@ksveg.com";
 
-  // ✅ Validate mobile
   if (mobile === "" || mobile.length !== 10 || isNaN(mobile)) {
     alert("⚠️ Please enter a valid 10-digit mobile number!");
     return;
   }
-
-  // ✅ Validate password
   if (password.length !== 6 || isNaN(password)) {
     alert("⚠️ Password must be exactly 6 digits!");
     return;
   }
 
-  // 🔐 Login
+  showLoading("loginbtn"); // 🔥 show spinner
+
   firebase.auth().signInWithEmailAndPassword(fakeEmail, password)
     .then(userCredential => {
       const user = userCredential.user;
       return db.collection("users").doc(user.uid).get();
     })
     .then(doc => {
+      hideLoading("loginbtn", "Login"); // reset button
+
       if (doc.exists) {
-    const data = doc.data();
-    localStorage.setItem("customerName", data.name);
-    localStorage.setItem("customerMobile", data.phone);
-    localStorage.setItem("customerAddress", data.address);
+        const data = doc.data();
+        localStorage.setItem("customerName", data.name);
+        localStorage.setItem("customerMobile", data.phone);
+        localStorage.setItem("customerAddress", data.address);
 
-    // Set role
-    let role = "customer";
-    if(data.phone === "9655723110") {
-        role = "admin";
-    }
-    localStorage.setItem("userRole", role);
-    localStorage.setItem("isLoggedIn", "true");
+        // role check
+        let role = "customer";
+        if (data.phone === "9655723110") {
+          role = "admin";
+        }
+        localStorage.setItem("userRole", role);
+        localStorage.setItem("isLoggedIn", "true");
 
-    alert("🎉 Welcome " + data.name + "! ");
+        alert("🎉 Welcome " + data.name + "!");
 
-    // ✅ Update parent page UI
-    window.parent.setLogin();
-    window.parent.updateLoginStatus();
-    window.parent.closePopup();
+        // ✅ Update parent page UI
+        window.parent.setLogin();
+        window.parent.updateLoginStatus();
+        window.parent.closePopup();
 
-    // ✅ Redirect based on role
-    if(role === "admin") {
-        window.parent.location.href = "admin.html";
-    } else {
-        window.parent.location.href = "index.html";
-    }
-}
-
-    
+        // ✅ Redirect based on role
+        if (role === "admin") {
+          window.parent.location.href = "admin.html";
+        } else {
+          window.parent.location.href = "index.html";
+        }
+      }
     })
-  
     .catch(error => {
-      console.error("Login failed:", error.code, error.message);
+      hideLoading("loginbtn", "Login"); // reset button on failure
 
       if (error.code === "auth/user-not-found") {
         alert("📌 This mobile number is not registered. Please register first!");
@@ -203,6 +217,7 @@ function loginUser() {
       }
     });
 }
+
 
 function yes() {
   alert("Please Login your account!");
